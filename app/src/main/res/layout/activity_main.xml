@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_cound"/>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <EditText
+            android:id="@+id/EditTextReception"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:enabled="false"
+            android:gravity="top"
+            android:hint="Reception"
+            android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
+            android:textColor="#ffffff" >	</EditText>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:orientation="horizontal" >
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="94dp"
+        android:layout_gravity="right"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        tools:ignore="DuplicateIds">
+
+        <ToggleButton
+            android:id="@+id/button_repeat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="fill"
+            android:layout_weight="1"
+            android:text="@string/but_repeat"/>
+
+        <Button
+            android:id="@+id/buttonscan"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/but_start"/>
+
+        <Button
+            android:id="@+id/buttonstop"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/but_stop"/>
+        <Button
+            android:id="@+id/buttonclear"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/but_clear"/>
+
+    </LinearLayout>
+</LinearLayout>

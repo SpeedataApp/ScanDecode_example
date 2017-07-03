@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BarcodeDemo</string>
+     <string name="barcode_name">Barcode Scan</string>
+    <string name="but_start">Single Scan</string>
+    <string name="but_stop">Stop Scan</string>
+    <string name="but_close">Close</string>
+    <string name="but_repeat">Repeat Scan</string>
+    <string name="but_clear">Clear</string>
+    <string name="dialog_title">Content</string>
+    <string name="spinner">Scan key choose</string>
+    
+    <string name="DEV_OPEN_ERR">Device open failed！Software will quit！</string>
+    <string name="DIA_ALERT">Warning！</string>
+    <string name="DIA_CHECK">Confirm</string>
+    
+    
+    
+        <!-- exit -->
+         <string name="key_test_back_title">Remind</string>
+    <string name="action_exit_title">Exit</string>
+    <string name="action_exit_content">Whether out of the current application</string>
+    <string name="action_exit_sure">Sure</string>
+    <string name="action_exit_cancel">Cancel</string>
+    <string name="action_dialog_setting_config">Please check the "Enable Keyreport Scan" and "
+        Enable Keyreport Scan with warning tone" of Accessibility</string>
+    <string name="action_dialog_setting_config_sure_go">Go to set</string>
+
+</resources>

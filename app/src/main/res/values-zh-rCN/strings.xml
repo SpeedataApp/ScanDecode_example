@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">条码扫描示例程序</string>
+    <string name="barcode_name">条码扫描</string>
+    <string name="but_start">单次扫描</string>
+    <string name="but_repeat">重复扫描</string>
+    <string name="but_stop">停止扫描</string>
+    <string name="but_close">关闭</string>
+    <string name="but_clear">清屏</string>
+    <string name="dialog_title">内容</string>
+    <string name="spinner">扫描键选择</string>
+    
+        <!-- exit -->
+         <string name="key_test_back_title">提示</string>
+    <string name="action_exit_title">退出</string>
+    <string name="action_exit_content">是否退出当前应用</string>
+    <string name="action_exit_sure">确定</string>
+    <string name="action_exit_cancel">取消</string>
+    <string name="action_dialog_setting_config">请勾选辅助功能中"使能上报扫描键值"和"使能扫描提示音"</string>
+    <string name="action_dialog_setting_config_sure_go">去设置</string>
+</resources>
