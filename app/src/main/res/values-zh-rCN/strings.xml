@@ -9,7 +9,11 @@
     <string name="but_clear">清屏</string>
     <string name="dialog_title">内容</string>
     <string name="spinner">扫描键选择</string>
-    
+
+    <string name="DEV_OPEN_ERR">Device open failed！Software will quit！</string>
+    <string name="DIA_ALERT">Warning！</string>
+    <string name="DIA_CHECK">Confirm</string>
+
         <!-- exit -->
          <string name="key_test_back_title">提示</string>
     <string name="action_exit_title">退出</string>
