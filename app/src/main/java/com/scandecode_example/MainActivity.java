@@ -3,6 +3,7 @@ package com.scandecode_example;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -16,7 +17,7 @@ import com.scandecode.inf.ScanInterface;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mReception;
     private TextView tvcound;
-    private Button btnSingleScan, btnClear ,btnStop;
+    private Button btnSingleScan, btnClear, btnStop, btnTouch;
     private ToggleButton toggleButtonRepeat;
     private boolean isFlag = false;
     private int scancount = 0;
@@ -37,6 +38,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvcound = (TextView) findViewById(R.id.tv_cound);
         btnSingleScan.setOnClickListener(this);
         btnClear.setOnClickListener(this);
+        btnTouch = (Button) findViewById(R.id.buttontouch);
+
+        btnTouch.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_UP:{
+                        scanDecode.stopScan();//停止扫描
+                        handler.removeCallbacks(startTask);
+                        break;
+                    }
+                    case MotionEvent.ACTION_DOWN:{
+                        scanDecode.starScan();//启动扫描
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+
         toggleButtonRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
@@ -68,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             scanDecode.starScan();
-            handler.postDelayed(startTask, 300);
+            handler.postDelayed(startTask, 1000);
         }
     };
     @Override

@@ -14,6 +14,8 @@
     <string name="DIA_ALERT">Warning！</string>
     <string name="DIA_CHECK">Confirm</string>
 
+    <string name="but_touch">按压</string>
+
         <!-- exit -->
          <string name="key_test_back_title">提示</string>
     <string name="action_exit_title">退出</string>

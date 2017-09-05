@@ -70,6 +70,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/but_clear"/>
+        <Button
+            android:id="@+id/buttontouch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/but_touch"/>
 
     </LinearLayout>
 </LinearLayout>
