@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvcound = (TextView) findViewById(R.id.tv_cound);
         btnSingleScan.setOnClickListener(this);
         btnClear.setOnClickListener(this);
-        btnTouch = (Button) findViewById(R.id.buttontouch);
+        btnTouch = (Button) findViewById(R.id.buttonscan);
 
         btnTouch.setOnTouchListener(new View.OnTouchListener() {
             @Override
