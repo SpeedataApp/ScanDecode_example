@@ -14,8 +14,8 @@
     <string name="DEV_OPEN_ERR">Device open failed！Software will quit！</string>
     <string name="DIA_ALERT">Warning！</string>
     <string name="DIA_CHECK">Confirm</string>
-    
-    
+
+    <string name="but_touch">Touch</string>
     
         <!-- exit -->
          <string name="key_test_back_title">Remind</string>
