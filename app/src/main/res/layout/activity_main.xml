@@ -3,15 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+
     <TextView
+        android:id="@+id/tv_cound"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_cound"/>
+        android:layout_height="wrap_content" />
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
+
         <EditText
             android:id="@+id/EditTextReception"
             android:layout_width="fill_parent"
@@ -22,8 +25,7 @@
             android:gravity="top"
             android:hint="Reception"
             android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical"
-            android:textColor="#ffffff" >	</EditText>
+            android:scrollbars="vertical"></EditText>
     </ScrollView>
 
     <LinearLayout
@@ -31,9 +33,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -49,27 +52,29 @@
             android:layout_height="match_parent"
             android:layout_gravity="fill"
             android:layout_weight="1"
-            android:text="@string/but_repeat"/>
+            android:textOff="@string/but_repeat"
+            android:textOn="@string/but_stop" />
 
         <Button
             android:id="@+id/buttonscan"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/but_start"/>
+            android:text="@string/but_start" />
 
         <Button
             android:id="@+id/buttonstop"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/but_stop"/>
+            android:text="@string/but_stop" />
+
         <Button
             android:id="@+id/buttonclear"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/but_clear"/>
+            android:text="@string/but_clear" />
 
     </LinearLayout>
 </LinearLayout>
