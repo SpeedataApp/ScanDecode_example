@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void getBarcode(String data) {
                 scancount+=1;
-                tvcound.setText("扫描次数："+scancount+"");
+                tvcound.setText(getString(R.string.scan_time)+scancount+"");
                 mReception.append(data+"\n");
             }
 
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonclear:
                 mReception.setText(""); //清屏
                 scancount=0;
-                tvcound.setText("扫描次数："+scancount+"");
+                tvcound.setText(getString(R.string.scan_time)+scancount+"");
                 break;
             case R.id.buttonscan:
                 scanDecode.starScan();//启动扫描

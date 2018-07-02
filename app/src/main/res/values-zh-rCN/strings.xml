@@ -24,4 +24,5 @@
     <string name="action_exit_cancel">取消</string>
     <string name="action_dialog_setting_config">请勾选辅助功能中"使能上报扫描键值"和"使能扫描提示音"</string>
     <string name="action_dialog_setting_config_sure_go">去设置</string>
+    <string name="scan_time">扫描次数：</string>
 </resources>
