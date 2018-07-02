@@ -84,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvcound.setText("扫描次数："+scancount+"");
                 mReception.append(data+"\n");
             }
+
+            @Override
+            public void getBarcodeByte(byte[] bytes) {
+                //返回原始解码数据
+            }
         });
     }
     Handler handler = new Handler();

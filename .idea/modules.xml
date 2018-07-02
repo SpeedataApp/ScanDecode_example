@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:\SpeedataDemo\ScanDecode_example\ScanDecode-example.iml" filepath="D:\SpeedataDemo\ScanDecode_example\ScanDecode-example.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScanDecode_example.iml" filepath="$PROJECT_DIR$/ScanDecode_example.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
