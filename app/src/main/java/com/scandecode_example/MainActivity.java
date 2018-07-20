@@ -1,5 +1,6 @@
 package com.scandecode_example;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.ToggleButton;
 
 import com.scandecode.ScanDecode;
 import com.scandecode.inf.ScanInterface;
+import com.speedata.libutils.DataConversionUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mReception;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int scancount = 0;
     private ScanInterface scanDecode;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void getBarcodeByte(byte[] bytes) {
                 //返回原始解码数据
+                scancount+=1;
+                tvcound.setText(getString(R.string.scan_time)+scancount+"");
+                mReception.append(DataConversionUtils.byteArrayToString(bytes) +"\n");
             }
         });
     }
