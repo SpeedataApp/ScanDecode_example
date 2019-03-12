@@ -81,18 +81,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        if ("true".equals(SystemProperties.get("persist.sys.playscanmusic"))) {
+            toggleButtonSound.setChecked(true);
+        }
+
         toggleButtonSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton,
                                          boolean isChecked) {
                 if (isChecked) {
                     SystemProperties.set("persist.sys.playscanmusic","true");
-                }
-                else {
+                } else {
                     SystemProperties.set("persist.sys.playscanmusic","false");
                 }
             }
         });
+
+        if ("true".equals(SystemProperties.get("persist.sys.scanvibrate"))) {
+            toggleButtonVibrate.setChecked(true);
+        }
 
         toggleButtonVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
