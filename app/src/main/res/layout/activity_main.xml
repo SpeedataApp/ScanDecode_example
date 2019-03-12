@@ -13,7 +13,8 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        tools:ignore="InefficientWeight">
 
         <EditText
             android:id="@+id/EditTextReception"
@@ -22,10 +23,12 @@
             android:layout_weight="1"
             android:background="@null"
             android:enabled="false"
+            android:textColor="@color/black"
             android:gravity="top"
             android:hint="Reception"
             android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical"></EditText>
+            android:scrollbars="vertical"
+            tools:ignore="Autofill,HardcodedText,ObsoleteLayoutParam,ScrollViewSize,TextFields" />
     </ScrollView>
 
     <LinearLayout
@@ -33,7 +36,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded">
 
     </LinearLayout>
 
@@ -44,7 +48,7 @@
         android:layout_gravity="right"
         android:gravity="bottom"
         android:orientation="horizontal"
-        tools:ignore="DuplicateIds">
+        tools:ignore="DuplicateIds,RtlHardcoded">
 
         <ToggleButton
             android:id="@+id/button_repeat"
@@ -62,12 +66,23 @@
             android:layout_weight="1"
             android:text="@string/but_start" />
 
-        <Button
-            android:id="@+id/buttonstop"
+        <ToggleButton
+            android:id="@+id/butSound"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="fill"
             android:layout_weight="1"
-            android:text="@string/but_stop" />
+            android:textOff="@string/sound_off"
+            android:textOn="@string/sound_on" />
+
+        <ToggleButton
+            android:id="@+id/butVibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="fill"
+            android:layout_weight="1"
+            android:textOff="@string/vibrate_off"
+            android:textOn="@string/vibrate_on" />
 
         <Button
             android:id="@+id/buttonclear"

@@ -3,6 +3,7 @@ package com.scandecode_example;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,34 +15,34 @@ import android.widget.ToggleButton;
 
 import com.scandecode.ScanDecode;
 import com.scandecode.inf.ScanInterface;
-import com.speedata.libutils.DataConversionUtils;
-
+@SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mReception;
     private TextView tvcound;
-    private Button btnSingleScan, btnClear, btnStop, btnTouch;
-    private ToggleButton toggleButtonRepeat;
+    private Button btnSingleScan, btnClear, btnTouch;
+    private ToggleButton toggleButtonRepeat,toggleButtonSound,toggleButtonVibrate;
     private boolean isFlag = false;
     private int scancount = 0;
     private ScanInterface scanDecode;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "CutPasteId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         scanDecode = new ScanDecode(this);
         scanDecode.initService("true");//初始化扫描服务
-        btnSingleScan = (Button) findViewById(R.id.buttonscan);
-        btnClear = (Button) findViewById(R.id.buttonclear);
-        toggleButtonRepeat = (ToggleButton) findViewById(R.id.button_repeat);
-        mReception = (EditText) findViewById(R.id.EditTextReception);
-        btnStop = (Button) findViewById(R.id.buttonstop);
-        btnStop.setOnClickListener(this);
-        tvcound = (TextView) findViewById(R.id.tv_cound);
-        btnSingleScan.setOnClickListener(this);
+        btnSingleScan =  findViewById (R.id.buttonscan);
+        btnClear =  findViewById (R.id.buttonclear);
+        toggleButtonRepeat =  findViewById(R.id.button_repeat);
+        mReception =  findViewById (R.id.EditTextReception);
+//        btnStop = (Button) findViewById(R.id.buttonstop);
+//        btnStop.setOnClickListener(this);
+        tvcound =  findViewById (R.id.tv_cound);
         btnClear.setOnClickListener(this);
-        btnTouch = (Button) findViewById(R.id.buttonscan);
+        btnTouch =  findViewById (R.id.buttonscan);
+        toggleButtonSound = findViewById (R.id.butSound);
+        toggleButtonVibrate = findViewById (R.id.butVibrate);
 
         btnTouch.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -80,6 +81,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        toggleButtonSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton,
+                                         boolean isChecked) {
+                if (isChecked) {
+                    SystemProperties.set("persist.sys.playscanmusic","true");
+                }
+                else {
+                    SystemProperties.set("persist.sys.playscanmusic","false");
+                }
+            }
+        });
+
+        toggleButtonVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton,
+                                         boolean isChecked) {
+                if (isChecked) {
+                    SystemProperties.set("persist.sys.scanvibrate","true");
+                }
+                else {
+                    SystemProperties.set("persist.sys.scanvibrate","false");
+                }
+
+            }
+        });
+
         scanDecode.getBarCode(new ScanInterface.OnScanListener() {
             @Override
             public void getBarcode(String data) {
@@ -91,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void getBarcodeByte(byte[] bytes) {
                 //返回原始解码数据
-                scancount+=1;
-                tvcound.setText(getString(R.string.scan_time)+scancount+"");
-                mReception.append(DataConversionUtils.byteArrayToString(bytes) +"\n");
+//                scancount+=1;
+//                tvcound.setText(getString(R.string.scan_time)+scancount+"");
+//                mReception.append(DataConversionUtils.byteArrayToString(bytes) +"\n");
             }
         });
     }
@@ -107,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handler.postDelayed(startTask, 1000);
         }
     };
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -118,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonscan:
                 scanDecode.starScan();//启动扫描
                 break;
-            case R.id.buttonstop:
-                scanDecode.stopScan();//停止扫描
-                handler.removeCallbacks(startTask);
-                break;
+//            case R.id.buttonstop:
+//                scanDecode.stopScan();//停止扫描
+//                handler.removeCallbacks(startTask);
+//                break;
             default:
                 break;
         }

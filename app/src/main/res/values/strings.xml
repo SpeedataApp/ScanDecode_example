@@ -27,5 +27,9 @@
         Enable Keyreport Scan with warning tone" of Accessibility</string>
     <string name="action_dialog_setting_config_sure_go">Go to set</string>
     <string name="scan_time">Scanning times：</string>
+    <string name="sound_off">Sound OFF</string>
+    <string name="sound_on">Sound ON</string>
+    <string name="vibrate_off">Vibrate OFF</string>
+    <string name="vibrate_on">Vibrate ON</string>
 
 </resources>
