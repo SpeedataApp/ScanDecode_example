@@ -1,7 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
+
+    <color name="red">#ff0000</color>
+    <color name="green">#03f70c</color>
+    <color name="dgreen">#1ea123</color>
+    <color name="white">#ffffff</color>
+    <color name="title_color">#167c64</color>
+    <color name="xitongbiaoti">#0a715f</color>
+    <color name="orange">#FFFA9837</color>
+    <color name="color_mywork_red">#FFF46344</color>
+    <color name="bg_color">#fff1f5f8</color>
+    <color name="blue">#4F8BD9</color>
+    <color name="transparent">#00000000</color>
+    <color name="work_red">#FFF46344</color>
+    <color name="click_normal">#ededed</color>
+    <color name="gold">#EBC273</color>
+    <color name="button_green">#00B6A4</color>
+    <color name="color_bg_yellow">#FED42A</color>
+    <color name="warn_red">#FE4038</color>
+    <color name="warn_yellow">#FA9837</color>
+    <color name="warn_green">#00BB6A</color>
+    <color name="warn_not_read">#FF6418</color>
+    <color name="warn_ll_bg">#F1F5F8</color>
+    <color name="light_green">#EFFEFE</color>
+    <color name="view_line">#F1F5F8</color>
+    <color name="default_text">#8A000000</color>
+    <color name="colorLineBackground">#F1F5F9</color>
+    <color name="colorMyDevice">#ff00b6a4</color>
+    <color name="color_plan_text">#FF31B7BE</color>
+    <color name="color_overtime_bg">#0AF46344</color>
+    <color name="color_view_line">#d6d7dc</color>
+    <color name="color_star_yellow">#FFFEC810</color>
+
+    <color name="line_color">#e7e7e7</color>
+    <color name="content_background">#f2f2f2</color>
+    <color name="solar_background">#009988</color>
+
+    <color name="background_list_selector">#d9d9d9</color>
+    <color name="background_list_selector_un">#ffffff</color>
+
+    <color name="color_tab_choose">#00b6a4</color>
+    <color name="color_tab_choose_un">#999999</color>
+
+
+    <color name="colorBlack">#000000</color>
+    <color name="holfTransparent">#000000</color>
+
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorGray">#FFF0F0F0</color>
+    <color name="colorBlue">#FF0A86F7</color>
+    <color name="colorDialogBlue">#FF0A86F7</color>
+    <color name="colorDialogBlack">#FF191B26</color>
+    <color name="colorDialogGray">#FF7A7F91</color>
+
 </resources>

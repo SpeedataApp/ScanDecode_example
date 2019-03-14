@@ -29,4 +29,6 @@
     <string name="sound_on">提示音 开</string>
     <string name="vibrate_off">震动 关</string>
     <string name="vibrate_on">震动 开</string>
+    <string name="to_set">去设置</string>
+    <string name="restart">请勾选使能扫描后重新启动应用</string>
 </resources>
