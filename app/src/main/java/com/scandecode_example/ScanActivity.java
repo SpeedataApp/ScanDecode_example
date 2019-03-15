@@ -1,12 +1,56 @@
 package com.scandecode_example;
 
-import android.support.v7.app.AppCompatActivity;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.scandecode.ScanDecode;
+import com.scandecode.inf.ScanInterface;
+import com.scandecode_example.adapter.UnitAdapter;
+import com.scandecode_example.model.WeightEvent;
+import com.scandecode_example.utils.FileUtils;
+import com.scandecode_example.utils.ToastUtils;
+import com.scandecode_example.view.EndWindow;
+import com.speedata.utils.MyDateAndTime;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xuyan
  */
 public class ScanActivity extends AppCompatActivity {
+
+    private Button mSingle;
+    private Button mTimes;
+    private ImageView mSettings;
+    private TextView mClear;
+    private UnitAdapter mAdapter;
+    private List<String> mList;
+    private boolean mTimesScan;
+    private TextView tvcound;
+    private int scancount = 0;
+    private ScanInterface scanDecode;
+
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +59,195 @@ public class ScanActivity extends AppCompatActivity {
         initView();
     }
 
+    @SuppressLint({"ClickableViewAccessibility", "NewApi"})
     private void initView() {
+        EventBus.getDefault().register(this);
+        scanDecode = new ScanDecode(this);
+        scanDecode.initService("true");
+        mSingle = findViewById(R.id.btn_onetime);
+        mTimes = findViewById(R.id.btn_times);
+        tvcound = findViewById(R.id.tv_cound);
+        mTimesScan = false;
+        mTimes.setOnClickListener(v -> {
+            if (mTimesScan) {
+                handler.removeCallbacks(startTask);
+                scanDecode.stopScan();
+                mTimesScan = false;
+                mTimes.setText(getString(R.string.start_times));
+            } else {
+                scancount = 0;
+                handler.removeCallbacks(startTask);
+                handler.postDelayed(startTask, 0);
+                mTimesScan = true;
+                mTimes.setText(getString(R.string.stop_times));
 
+            }
+        });
+        recyclerView = findViewById(R.id.rv_content);
+        mList = new ArrayList<>();
+        mAdapter = new UnitAdapter(mList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(ScanActivity.this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(mAdapter);
+        mSettings = findViewById(R.id.title_settings);
+        mSettings.setOnClickListener(v -> new EndWindow(ScanActivity.this).showAtLocation(mSettings, Gravity.START, 0, 0));
+        mClear = findViewById(R.id.title_clear);
+        mClear.setOnClickListener(v -> {
+            mList.clear();
+            mAdapter.notifyDataSetChanged();
+            scancount = 0;
+            tvcound.setText("");
+        });
+        mSingle.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_UP: {
+                    if (mTimesScan) {
+                        mTimes.performClick();
+                    } else {
+                        handler.removeCallbacks(startTask);
+                        scanDecode.stopScan();
+                    }
+                    break;
+                }
+                case MotionEvent.ACTION_DOWN: {
+                    scanDecode.starScan();
+                    break;
+                }
+                default:
+                    break;
+            }
+            return false;
+        });
+        scanDecode.getBarCode(new ScanInterface.OnScanListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void getBarcode(String data) {
+                if (recyclerView.getBackground() != null) {
+                    recyclerView.setBackground(null);
+                }
+                scancount += 1;
+                tvcound.setText(getString(R.string.scan_time) + scancount + "");
+                mList.add(data);
+                mAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+            }
+            @Override
+            public void getBarcodeByte(byte[] bytes) {
+            }
+        });
+
+        boolean cn = "CN".equals(getApplicationContext().getResources().getConfiguration().locale.getCountry());
+        if (cn) {
+            recyclerView.setBackground(AppDecode.getInstance().getDrawable(R.drawable.bg_qqqq));
+        } else {
+            recyclerView.setBackground(AppDecode.getInstance().getDrawable(R.drawable.bg_pppp));
+        }
     }
+
+    Handler handler = new Handler();
+
+    /**
+     * 连续扫描
+     */
+    private Runnable startTask = new Runnable() {
+        @Override
+        public void run() {
+            scanDecode.starScan();
+            handler.postDelayed(startTask, 1000);
+            mTimesScan = true;
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+        mTimesScan = false;
+        scanDecode.stopScan();
+        handler.removeCallbacks(startTask);
+        scanDecode.onDestroy();
+        super.onDestroy();
+    }
+
+    @SuppressLint("WrongConstant")
+    @Subscribe( threadMode = ThreadMode.MAIN)
+    public void onEvent(WeightEvent event) {
+        switch (event.getMessage()) {
+            case "explore":
+                outPutFile();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void outPutFile() {
+        if (mList.size() == 0) {
+            ToastUtils.showShortToastSafe(R.string.no_file);
+            return;
+        }
+        FileUtils fileUtils = new FileUtils();
+        int h = fileUtils.outputOnefile(mList, createFilename());
+        scanFile(this, createFilename(), h);
+    }
+
+    /**
+     * 创建导出文件的名字
+     * @return 完整文件路径+名
+     */
+    @SuppressLint("SdCardPath")
+    public String createFilename() {
+        String checktime = MyDateAndTime.getMakerDate();
+        String date = checktime.substring(0, 8);
+        String time = checktime.substring(8, 12);
+        String name = "barcode" + date + "_" + time;
+        return "/sdcard/" + name + ".txt";
+    }
+
+    /**
+     * 更新文件显示的广播，在生成文件后调用一次。
+     */
+    public static void scanFile(Context context, String filePath, int h) {
+        Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        scanIntent.setData(Uri.fromFile(new File(filePath)));
+        context.sendBroadcast(scanIntent);
+        if (h == 1){
+            ToastUtils.showShortToastSafe(R.string.explore_success);
+        }
+    }
+
+    /**
+     * 返回键监听
+     */
+    private long mkeyTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+            case KeyEvent.ACTION_DOWN:
+                if ((System.currentTimeMillis() - mkeyTime) > 2000) {
+                    mkeyTime = System.currentTimeMillis();
+                    boolean cn = "CN".equals(getApplicationContext().getResources().getConfiguration().locale.getCountry());
+                    if (cn) {
+                        ToastUtils.showShortToastSafe("再次点击返回退出");
+                    } else {
+                        ToastUtils.showShortToastSafe("Press the exit again");
+                    }
+                } else {
+                    try {
+                        finish();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

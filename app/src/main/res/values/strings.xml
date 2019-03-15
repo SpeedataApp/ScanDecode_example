@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">BarcodeDemo</string>
-    <string name="barcode_name">Barcode Scan</string>
-    <string name="but_start">Single Scan</string>
-    <string name="but_stop">Stop Scan</string>
-    <string name="but_close">Close</string>
-    <string name="but_repeat">Repeat Scan</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Barcode scanning sample program</string>
+    <string name="barcode_name">Barcode scanning</string>
+    <string name="but_start">Single scan</string>
+    <string name="but_repeat">Repeat scan</string>
+    <string name="but_stop">Stop scanning</string>
+    <string name="but_close">shut down</string>
     <string name="but_clear">Clear</string>
-    <string name="dialog_title">Content</string>
-    <string name="spinner">Scan key choose</string>
+    <string name="dialog_title">content</string>
+    <string name="spinner">Scan key selection</string>
 
     <string name="DEV_OPEN_ERR">Device open failed！Software will quit！</string>
     <string name="DIA_ALERT">Warning！</string>
     <string name="DIA_CHECK">Confirm</string>
 
-    <string name="but_touch">Touch</string>
+    <string name="but_touch">Press</string>
 
     <!-- exit -->
-    <string name="key_test_back_title">Remind</string>
-    <string name="action_exit_title">Exit</string>
-    <string name="action_exit_content">Whether out of the current application</string>
-    <string name="action_exit_sure">Sure</string>
-    <string name="action_exit_cancel">Cancel</string>
-    <string name="action_dialog_setting_config">Please check the "Enable Keyreport Scan" and "
-        Enable Keyreport Scan with warning tone" of Accessibility</string>
+    <string name="key_test_back_title">prompt</string>
+    <string name="action_exit_title">drop out</string>
+    <string name="action_exit_content">Whether to quit the current app</string>
+    <string name="action_exit_sure">determine</string>
+    <string name="action_exit_cancel" tools:ignore="ButtonCase">cancel</string>
+    <string name="action_dialog_setting_config">Please check the "Enable escalation scan key value" and "Enable scan tone" in the auxiliary function.</string>
     <string name="action_dialog_setting_config_sure_go">Go to set</string>
-    <string name="scan_time">Scanning times：</string>
-    <string name="sound_off">Sound OFF</string>
-    <string name="sound_on">Sound ON</string>
-    <string name="vibrate_off">Vibrate OFF</string>
-    <string name="vibrate_on">Vibrate ON</string>
-    <string name="to_set">去设置</string>
-    <string name="restart">请勾选使能扫描后重新启动应用</string>
+    <string name="scan_time">Number of scans:</string>
+    <string name="sound_off">Prompt tone on</string>
+    <string name="sound_on">Prompt tone off</string>
+    <string name="vibrate_off">Vibration off</string>
+    <string name="vibrate_on">Vibration on</string>
+    <string name="to_set">Go to set</string>
+    <string name="restart">Please tick Enable scan to return to the application.</string>
+    <string name="single">Single scan</string>
+    <string name="times">Repeat scan</string>
+    <string name="explore">Export result</string>
+    <string name="sound">Beep</string>
+    <string name="vib">shock</string>
+    <string name="stop_times">Stop scanning</string>
+    <string name="start_times">Repeat scan</string>
+    <string name="title_scan">Barcode scanning</string>
+    <string name="clear_title">Clear</string>
+    <string name="no_file">No content, no files generated</string>
+    <string name="explore_success">The export is successful, the file is located in the root directory</string>
 
 </resources>

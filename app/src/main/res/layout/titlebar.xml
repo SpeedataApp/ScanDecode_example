@@ -9,7 +9,6 @@
     tools:ignore="MissingDefaultResource">
 
     <ImageView
-        
         android:id="@+id/title_settings"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
@@ -26,9 +25,9 @@
         android:layout_height="40dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="条码扫描"
+        android:text="@string/title_scan"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="18sp"
         tools:ignore="RtlHardcoded" />
 
     <TextView
@@ -38,7 +37,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="right|center"
-        android:text="清屏"
+        android:text="@string/clear_title"
         android:textColor="@color/white"
         android:textSize="16sp"
         tools:ignore="RtlHardcoded" />

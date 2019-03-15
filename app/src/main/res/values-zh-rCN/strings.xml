@@ -30,5 +30,16 @@
     <string name="vibrate_off">震动 关</string>
     <string name="vibrate_on">震动 开</string>
     <string name="to_set">去设置</string>
-    <string name="restart">请勾选使能扫描后重新启动应用</string>
+    <string name="restart">请勾选使能扫描后返回应用</string>
+    <string name="single">单次扫描</string>
+    <string name="times">重复扫描</string>
+    <string name="explore">导出结果</string>
+    <string name="sound">提示音</string>
+    <string name="vib">震动</string>
+    <string name="stop_times">停止扫描</string>
+    <string name="start_times">重复扫描</string>
+    <string name="title_scan">条码扫描</string>
+    <string name="clear_title">清屏</string>
+    <string name="no_file">没有内容，不生成文件</string>
+    <string name="explore_success">导出成功，文件位于根目录下</string>
 </resources>
