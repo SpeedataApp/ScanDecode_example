@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 if (isChecked) {
-                    scancount = 0;
+
                     handler.removeCallbacks(startTask);
                     handler.postDelayed(startTask, 0);
                 } else {
