@@ -75,7 +75,6 @@ public class ScanActivity extends AppCompatActivity {
                 mTimesScan = false;
                 mTimes.setText(getString(R.string.start_times));
             } else {
-                scancount = 0;
                 handler.removeCallbacks(startTask);
                 handler.postDelayed(startTask, 0);
                 mTimesScan = true;

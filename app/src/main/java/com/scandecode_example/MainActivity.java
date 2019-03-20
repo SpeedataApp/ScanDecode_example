@@ -45,31 +45,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toggleButtonSound = findViewById(R.id.butSound);
         toggleButtonVibrate = findViewById(R.id.butVibrate);
 
-        btnTouch.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    //停止扫描
-                    case MotionEvent.ACTION_UP: {
-                        if (toggleButtonRepeat.isChecked()) {
-                            toggleButtonRepeat.performClick();
-                        } else {
-                            handler.removeCallbacks(startTask);
-                            scanDecode.stopScan();
-                        }
-                        break;
+        btnTouch.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                //停止扫描
+                case MotionEvent.ACTION_UP: {
+                    if (toggleButtonRepeat.isChecked()) {
+                        toggleButtonRepeat.performClick();
+                    } else {
+                        handler.removeCallbacks(startTask);
+                        scanDecode.stopScan();
                     }
-                    //启动扫描
-                    case MotionEvent.ACTION_DOWN: {
-                        scanDecode.starScan();
-                        break;
-                    }
-
-                    default:
-                        break;
+                    break;
                 }
-                return false;
+                //启动扫描
+                case MotionEvent.ACTION_DOWN: {
+                    scanDecode.starScan();
+                    break;
+                }
+
+                default:
+                    break;
             }
+            return false;
         });
 
         toggleButtonRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
