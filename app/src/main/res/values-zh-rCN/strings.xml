@@ -42,4 +42,6 @@
     <string name="clear_title">清屏</string>
     <string name="no_file">没有内容，不生成文件</string>
     <string name="explore_success">导出成功，文件位于根目录下</string>
+    <string name="scan_interval">切换扫描间隔</string>
+    <string name="change">切换扫描间隔:</string>
 </resources>

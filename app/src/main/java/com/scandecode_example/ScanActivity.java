@@ -22,6 +22,7 @@ import com.scandecode.inf.ScanInterface;
 import com.scandecode_example.adapter.UnitAdapter;
 import com.scandecode_example.model.WeightEvent;
 import com.scandecode_example.utils.FileUtils;
+import com.scandecode_example.utils.SpUtils;
 import com.scandecode_example.utils.ToastUtils;
 import com.scandecode_example.view.EndWindow;
 import com.speedata.utils.MyDateAndTime;
@@ -152,7 +153,7 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         public void run() {
             scanDecode.starScan();
-            handler.postDelayed(startTask, 1000);
+            handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
             mTimesScan = true;
         }
     };

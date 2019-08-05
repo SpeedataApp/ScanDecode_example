@@ -42,5 +42,7 @@
     <string name="clear_title">Clear</string>
     <string name="no_file">No content, no files generated</string>
     <string name="explore_success">The export is successful, the file is located in the root directory</string>
+    <string name="scan_interval">Change Interval</string>
+    <string name="change">Change Interval:</string>
 
 </resources>
