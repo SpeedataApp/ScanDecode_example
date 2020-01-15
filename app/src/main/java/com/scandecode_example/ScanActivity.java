@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author xuyan
+ * @author xuyan  Example page to implement scan-related functions
  */
 public class ScanActivity extends AppCompatActivity {
 
@@ -148,6 +148,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 连续扫描
+     * Continuous scan
      */
     private Runnable startTask = new Runnable() {
         @Override
@@ -193,8 +194,8 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     /**
-     * 创建导出文件的名字
-     * @return 完整文件路径+名
+     * 创建导出文件的名字          Create export file name
+     * @return 完整文件路径+名     Full file path + name
      */
     @SuppressLint("SdCardPath")
     public String createFilename() {
@@ -207,6 +208,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 更新文件显示的广播，在生成文件后调用一次。
+     *Update the broadcast shown by the file, called once after the file is generated.
      */
     public static void scanFile(Context context, String filePath, int h) {
         Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -219,6 +221,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 返回键监听
+     * Return key listening
      */
     private long mkeyTime = 0;
 

@@ -3,10 +3,9 @@ package com.scandecode_example;
 import android.app.Application;
 
 
+
 /**
- * @author :Reginer in  2018/4/9 15:05.
- * 联系方式:QQ:282921012
- * 功能描述:
+ * @author xuyan  Application
  */
 public class AppDecode extends Application {
 

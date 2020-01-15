@@ -12,7 +12,7 @@ import com.scandecode_example.R;
 
 
 /**
- * @author xuyan  title栏
+ * @author xuyan  title
  */
 public class CustomToolBar extends RelativeLayout implements View.OnClickListener {
 
@@ -31,7 +31,7 @@ public class CustomToolBar extends RelativeLayout implements View.OnClickListene
 
     /**
      * 初始化组件
-     *
+     * Initialization module
      * @param context
      */
     private void init(Context context) {
@@ -48,6 +48,7 @@ public class CustomToolBar extends RelativeLayout implements View.OnClickListene
 
     /**
      * 按钮点击接口
+     * Button click interface
      */
     public interface BtnClickListener {
         void clearClick();

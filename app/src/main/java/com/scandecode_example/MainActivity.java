@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -16,6 +15,10 @@ import android.widget.ToggleButton;
 import com.scandecode.ScanDecode;
 import com.scandecode.inf.ScanInterface;
 
+/**
+ * @author xuyan  Original sample page, temporarily deprecated
+ * Implement the main page for calling scan related functions
+ */
 @SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mReception;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         scanDecode = new ScanDecode(this);
         //初始化扫描服务
+        //Initialize the scan service
         scanDecode.initService("true");
         btnSingleScan = findViewById(R.id.buttonscan);
         btnClear = findViewById(R.id.buttonclear);
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnTouch.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 //停止扫描
+                //Stop scanning
                 case MotionEvent.ACTION_UP: {
                     if (toggleButtonRepeat.isChecked()) {
                         toggleButtonRepeat.performClick();
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 //启动扫描
+                //Start scan
                 case MotionEvent.ACTION_DOWN: {
                     scanDecode.starScan();
                     break;
@@ -69,54 +75,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         });
 
-        toggleButtonRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                if (isChecked) {
+        toggleButtonRepeat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
 
-                    handler.removeCallbacks(startTask);
-                    handler.postDelayed(startTask, 0);
-                } else {
-                    handler.removeCallbacks(startTask);
-                    scanDecode.stopScan();
-                }
+                handler.removeCallbacks(startTask);
+                handler.postDelayed(startTask, 0);
+            } else {
+                handler.removeCallbacks(startTask);
+                scanDecode.stopScan();
             }
         });
 
+        //Beep
         if ("true".equals(SystemProperties.get("persist.sys.playscanmusic"))) {
             toggleButtonSound.setChecked(true);
         }
 
-        toggleButtonSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton,
-                                         boolean isChecked) {
-                if (isChecked) {
-                    SystemProperties.set("persist.sys.playscanmusic", "true");
-                } else {
-                    SystemProperties.set("persist.sys.playscanmusic", "false");
-                }
+        toggleButtonSound.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                SystemProperties.set("persist.sys.playscanmusic", "true");
+            } else {
+                SystemProperties.set("persist.sys.playscanmusic", "false");
             }
         });
 
+        //Vibrator
         if ("true".equals(SystemProperties.get("persist.sys.scanvibrate"))) {
             toggleButtonVibrate.setChecked(true);
         }
 
-        toggleButtonVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton,
-                                         boolean isChecked) {
-                if (isChecked) {
-                    SystemProperties.set("persist.sys.scanvibrate", "true");
-                } else {
-                    SystemProperties.set("persist.sys.scanvibrate", "false");
-                }
-
+        toggleButtonVibrate.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                SystemProperties.set("persist.sys.scanvibrate", "true");
+            } else {
+                SystemProperties.set("persist.sys.scanvibrate", "false");
             }
+
         });
 
+        //result
         scanDecode.getBarCode(new ScanInterface.OnScanListener() {
             @Override
             public void getBarcode(String data) {
@@ -127,7 +124,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void getBarcodeByte(byte[] bytes) {
-                //返回原始解码数据
+                //返回原始解码数据,无
+                //Returns raw decoded data,not have
 //                scancount+=1;
 //                tvcound.setText(getString(R.string.scan_time)+scancount+"");
 //                mReception.append(DataConversionUtils.byteArrayToString(bytes) +"\n");
@@ -138,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler handler = new Handler();
 
     //连续扫描
+    //Continuous scan
     private Runnable startTask = new Runnable() {
         @Override
         public void run() {
@@ -150,12 +149,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             //清屏
+            //Clear screen
             case R.id.buttonclear:
                 mReception.setText("");
                 scancount = 0;
                 tvcound.setText(getString(R.string.scan_time) + scancount + "");
                 break;
             //启动扫描
+            //Start scan
             case R.id.buttonscan:
                 scanDecode.starScan();
                 break;
@@ -167,9 +168,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         //停止扫描
+        //Stop scanning
         scanDecode.stopScan();
         handler.removeCallbacks(startTask);
         //回复初始状态
+        //Return to initial state
         scanDecode.onDestroy();
         super.onDestroy();
     }

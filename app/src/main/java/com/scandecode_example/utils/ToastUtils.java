@@ -11,29 +11,7 @@ import com.scandecode_example.AppDecode;
 
 
 /**
- * ----------Dragon be here!----------/
- * 　　　┏┓　　　┏┓
- * 　　┏┛┻━━━┛┻┓
- * 　　┃　　　　　　　┃
- * 　　┃　　　━　　　┃
- * 　　┃　┳┛　┗┳　┃
- * 　　┃　　　　　　　┃
- * 　　┃　　　┻　　　┃
- * 　　┃　　　　　　　┃
- * 　　┗━┓　　　┏━┛
- * 　　　　┃　　　┃神兽保佑
- * 　　　　┃　　　┃代码无BUG！
- * 　　　　┃　　　┗━━━┓
- * 　　　　┃　　　　　　　┣┓
- * 　　　　┃　　　　　　　┏┛
- * 　　　　┗┓┓┏━┳┓┏┛
- * 　　　　　┃┫┫　┃┫┫
- * 　　　　　┗┻┛　┗┻┛
- * ━━━━━━神兽出没━━━━━━
- *
- * @author :Reginer in  2017/2/17 12:02.
- *         联系方式:QQ:282921012
- *         功能描述:吐司相关工具类
+ * @author xuyan
  */
 public class ToastUtils {
 
@@ -48,7 +26,7 @@ public class ToastUtils {
 
     /**
      * 吐司初始化
-     *
+     *Toast initialization
      * @param isJumpWhenMore 当连续弹出吐司时，是要弹出新吐司还是只修改文本内容
      *                       <p>{@code true}: 弹出新吐司<br>{@code false}: 只修改文本内容</p>
      *                       <p>如果为{@code false}的话可用来做显示任意时长的吐司</p>
@@ -59,7 +37,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示短时吐司
-     *
+     *Safely display short toast
      * @param text 文本
      */
     public static void showShortToastSafe(final CharSequence text) {
@@ -68,7 +46,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示短时吐司
-     *
+     *Safely display short toast
      * @param resId 资源Id
      */
     public static void showShortToastSafe(final @StringRes int resId) {
@@ -77,7 +55,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示短时吐司
-     *
+     *Safely display short toast
      * @param resId 资源Id
      * @param args  参数
      */
@@ -87,7 +65,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示短时吐司
-     *
+     *Safely display short toast
      * @param format 格式
      * @param args   参数
      */
@@ -97,7 +75,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示长时吐司
-     *
+     *Safely display long toast
      * @param text 文本
      */
     public static void showLongToastSafe(final CharSequence text) {
@@ -106,7 +84,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示长时吐司
-     *
+     *Safely display long toast
      * @param resId 资源Id
      */
     public static void showLongToastSafe(final @StringRes int resId) {
@@ -114,7 +92,7 @@ public class ToastUtils {
     }
     /**
      * 安全地显示中间短时吐司
-     *
+     *Show middle short toast safely
      * @param resId 资源Id
      */
     public static void showShortToastSafeCenter(final @StringRes int resId) {
@@ -125,7 +103,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示中间长时吐司
-     *
+     *Show middle long toast safely
      * @param text 显示内容
      */
     public static void showShortToastSafeCenter(final CharSequence text) {
@@ -136,7 +114,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示长时吐司
-     *
+     *Safely display long toast
      * @param resId 资源Id
      * @param args  参数
      */
@@ -146,7 +124,7 @@ public class ToastUtils {
 
     /**
      * 安全地显示长时吐司
-     *
+     *Safely display long toast
      * @param format 格式
      * @param args   参数
      */
@@ -156,7 +134,7 @@ public class ToastUtils {
 
     /**
      * 显示短时吐司
-     *
+     *Show short toast
      * @param text 文本
      */
     public static void showShortToast(CharSequence text) {
@@ -165,7 +143,7 @@ public class ToastUtils {
 
     /**
      * 显示短时吐司
-     *
+     *Show short toast
      * @param resId 资源Id
      */
     public static void showShortToast(@StringRes int resId) {
@@ -174,7 +152,7 @@ public class ToastUtils {
 
     /**
      * 显示短时吐司
-     *
+     *Show short toast
      * @param resId 资源Id
      * @param args  参数
      */
@@ -184,7 +162,7 @@ public class ToastUtils {
 
     /**
      * 显示短时吐司
-     *
+     *Show short toast
      * @param format 格式
      * @param args   参数
      */
@@ -194,7 +172,7 @@ public class ToastUtils {
 
     /**
      * 显示长时吐司
-     *
+     *Show long toast
      * @param text 文本
      */
     public static void showLongToast(CharSequence text) {
@@ -203,7 +181,7 @@ public class ToastUtils {
 
     /**
      * 显示长时吐司
-     *
+     *Show long toast
      * @param resId 资源Id
      */
     public static void showLongToast(@StringRes int resId) {
@@ -212,7 +190,7 @@ public class ToastUtils {
 
     /**
      * 显示长时吐司
-     *
+     *Show long toast
      * @param resId 资源Id
      * @param args  参数
      */
@@ -222,7 +200,7 @@ public class ToastUtils {
 
     /**
      * 显示长时吐司
-     *
+     *Show long toast
      * @param format 格式
      * @param args   参数
      */
@@ -232,7 +210,7 @@ public class ToastUtils {
 
     /**
      * 显示吐司
-     *
+     *Show toast
      * @param resId    资源Id
      * @param duration 显示时长
      */
@@ -242,7 +220,7 @@ public class ToastUtils {
 
     /**
      * 显示吐司
-     *
+     *Show toast
      * @param resId    资源Id
      * @param duration 显示时长
      * @param args     参数
@@ -253,7 +231,7 @@ public class ToastUtils {
 
     /**
      * 显示吐司
-     *
+     *Show toast
      * @param format   格式
      * @param duration 显示时长
      * @param args     参数
@@ -264,7 +242,7 @@ public class ToastUtils {
 
     /**
      * 显示吐司
-     *
+     *Show toast
      * @param text     文本
      * @param duration 显示时长
      */
@@ -284,6 +262,7 @@ public class ToastUtils {
 
     /**
      * 取消吐司显示
+     * Cancel Toast Display
      */
     public static void cancelToast() {
         if (sToast != null) {

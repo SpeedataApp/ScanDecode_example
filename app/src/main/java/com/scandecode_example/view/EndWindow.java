@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.EventBus;
 
 
 /**
- * @author xuyan
+ * @author xuyan Settings page
  */
 public class EndWindow extends PopupWindow {
 
@@ -55,7 +55,7 @@ public class EndWindow extends PopupWindow {
             mBalanceSet.setCompoundDrawablesWithIntrinsicBounds(null, null, mContext.getResources().getDrawable(R.drawable.bt_no, null), null);
         }
 
-        //声音
+        //beef
         mCodeSet.setOnClickListener(v -> {
             if ("false".equals(SystemProperties.get("persist.sys.playscanmusic"))) {
                 SystemProperties.set("persist.sys.playscanmusic", "true");
@@ -66,7 +66,7 @@ public class EndWindow extends PopupWindow {
             }
         });
 
-        //震动
+        //Vibrator
         mBalanceSet.setOnClickListener(v -> {
             if ("false".equals(SystemProperties.get("persist.sys.scanvibrate"))) {
                 SystemProperties.set("persist.sys.scanvibrate", "true");
@@ -79,15 +79,16 @@ public class EndWindow extends PopupWindow {
 
 
         //扫描间隔
-        int level1 = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000);
+        //Scan interval
+        int level1 = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 500);
         mInterval.setText(AppDecode.getInstance().getString(R.string.change) + level1);
         mInterval.setOnClickListener(v -> {
             //直接1-5之间轮，默认为2
+            //Round directly between 1-5, default is 2
+            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 500) + 500;
 
-            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000) + 1000;
-
-            if (level >= 6000) {
-                level = 1000;
+            if (level >= 5500) {
+                level = 500;
             }
 
             SpUtils.put(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, level);
@@ -96,6 +97,7 @@ public class EndWindow extends PopupWindow {
         });
 
         //导出
+        //explore
         mExit.setOnClickListener(v -> {
             dismiss();
             EventBus.getDefault().postSticky(new WeightEvent("explore", ""));

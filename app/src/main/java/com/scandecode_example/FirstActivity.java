@@ -15,6 +15,7 @@ import static com.scandecode_example.SpdConstant.SCAN_KEY_REPORT;
 
 /**
  * @author xuyan  首页面跳转，检测是否能扫描
+ *  Jump to the page, check if you can scan
  */
 public class FirstActivity extends AppCompatActivity {
 
