@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Slog;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -31,7 +34,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +59,8 @@ public class ScanActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
+    private BufferedWriter ScanCtrlFileWrite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +80,21 @@ public class ScanActivity extends AppCompatActivity {
         mTimes.setOnClickListener(v -> {
             if (mTimesScan) {
                 handler.removeCallbacks(startTask);
-                scanDecode.stopScan();
+
+                if ("N43".equals(SystemProperties.get("persist.sys.scanheadtype"))) {
+                    try {
+                        File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+                        ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+                        ScanCtrlFileWrite.write("trigoff");
+                        ScanCtrlFileWrite.flush();
+                        ScanCtrlFileWrite.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    scanDecode.stopScan();
+                }
+
                 mTimesScan = false;
                 mTimes.setText(getString(R.string.start_times));
             } else {
@@ -105,12 +127,30 @@ public class ScanActivity extends AppCompatActivity {
                         mTimes.performClick();
                     } else {
                         handler.removeCallbacks(startTask);
-                        scanDecode.stopScan();
+
+                        if ("N43".equals(SystemProperties.get("persist.sys.scanheadtype"))) {
+                            try {
+                                File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+                                ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+                                ScanCtrlFileWrite.write("trigoff");
+                                ScanCtrlFileWrite.flush();
+                                ScanCtrlFileWrite.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            scanDecode.stopScan();
+                        }
+
                     }
                     break;
                 }
                 case MotionEvent.ACTION_DOWN: {
-                    scanDecode.starScan();
+                    if ("N43".equals(SystemProperties.get("persist.sys.scanheadtype"))) {
+                        startScan();
+                    } else {
+                        scanDecode.starScan();
+                    }
                     break;
                 }
                 default:
@@ -131,6 +171,7 @@ public class ScanActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
             }
+
             @Override
             public void getBarcodeByte(byte[] bytes) {
             }
@@ -153,7 +194,22 @@ public class ScanActivity extends AppCompatActivity {
     private Runnable startTask = new Runnable() {
         @Override
         public void run() {
-            scanDecode.starScan();
+            if ("N43".equals(SystemProperties.get("persist.sys.scanheadtype"))) {
+
+                try {
+                    File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+                    ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+                    ScanCtrlFileWrite.write("trigoff");
+                    ScanCtrlFileWrite.flush();
+                    ScanCtrlFileWrite.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                SystemClock.sleep(20L);
+                startScan();
+            } else {
+                scanDecode.starScan();
+            }
             handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
             mTimesScan = true;
         }
@@ -165,14 +221,27 @@ public class ScanActivity extends AppCompatActivity {
             EventBus.getDefault().unregister(this);
         }
         mTimesScan = false;
-        scanDecode.stopScan();
+        if ("N43".equals(SystemProperties.get("persist.sys.scanheadtype"))) {
+            try {
+                File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+                ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+                ScanCtrlFileWrite.write("trigoff");
+                ScanCtrlFileWrite.flush();
+                ScanCtrlFileWrite.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            scanDecode.stopScan();
+        }
         handler.removeCallbacks(startTask);
+        handler.removeCallbacks(mStopN43Scan);
         scanDecode.onDestroy();
         super.onDestroy();
     }
 
     @SuppressLint("WrongConstant")
-    @Subscribe( threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(WeightEvent event) {
         switch (event.getMessage()) {
             case "explore":
@@ -195,6 +264,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 创建导出文件的名字          Create export file name
+     *
      * @return 完整文件路径+名     Full file path + name
      */
     @SuppressLint("SdCardPath")
@@ -208,13 +278,13 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 更新文件显示的广播，在生成文件后调用一次。
-     *Update the broadcast shown by the file, called once after the file is generated.
+     * Update the broadcast shown by the file, called once after the file is generated.
      */
     public static void scanFile(Context context, String filePath, int h) {
         Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         scanIntent.setData(Uri.fromFile(new File(filePath)));
         context.sendBroadcast(scanIntent);
-        if (h == 1){
+        if (h == 1) {
             ToastUtils.showShortToastSafe(R.string.explore_success);
         }
     }
@@ -252,5 +322,51 @@ public class ScanActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
+    private void sendBroadcasts(String s) {
+        Intent intent = new Intent();
+        intent.setAction(s);
+        this.sendBroadcast(intent);
+    }
+
+    private void startScan() {
+
+        handler.removeCallbacks(mStopN43Scan);
+        android.os.SystemProperties.set("persist.sys.startscan", "true");
+        try {
+            File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+            ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+            ScanCtrlFileWrite.write("on");
+            ScanCtrlFileWrite.flush();
+            ScanCtrlFileWrite.write("trig");
+            ScanCtrlFileWrite.flush();
+            ScanCtrlFileWrite.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        handler.postDelayed(mStopN43Scan, 10000);
+    }
+
+    //added by zyj N43
+    private final Runnable mStopN43Scan = new Runnable() {
+        @Override
+        public void run() {
+            Slog.i("N43", "mStopN43Scan");
+            try {
+                android.os.SystemProperties.set("persist.sys.startscan", "false");
+                File ScanDeviceName = new File("/sys/class/misc/uartscan/trigger");
+                ScanCtrlFileWrite = new BufferedWriter(new FileWriter(ScanDeviceName, false));
+                ScanCtrlFileWrite.write("trigoff");
+                ScanCtrlFileWrite.flush();
+                ScanCtrlFileWrite.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    //end
 
 }
