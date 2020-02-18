@@ -80,15 +80,15 @@ public class EndWindow extends PopupWindow {
 
         //扫描间隔
         //Scan interval
-        int level1 = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 500);
+        int level1 = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 0);
         mInterval.setText(AppDecode.getInstance().getString(R.string.change) + level1);
         mInterval.setOnClickListener(v -> {
             //直接1-5之间轮，默认为2
             //Round directly between 1-5, default is 2
-            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 500) + 500;
+            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 0) + 500;
 
             if (level >= 5500) {
-                level = 500;
+                level = 0;
             }
 
             SpUtils.put(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, level);
