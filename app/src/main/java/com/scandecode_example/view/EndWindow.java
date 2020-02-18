@@ -85,9 +85,9 @@ public class EndWindow extends PopupWindow {
         mInterval.setOnClickListener(v -> {
             //直接1-5之间轮，默认为2
             //Round directly between 1-5, default is 2
-            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 50) + 500;
+            int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 50) + 50;
 
-            if (level >= 5500) {
+            if (level >= 550) {
                 level = 50;
             }
 
