@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.scandecode_example.SpdConstant.PS_DURATION;
+import static com.scandecode_example.SpdConstant.PS_INTERVAL;
 
 /**
  * @author xuyan  Example page to implement scan-related functions
@@ -154,7 +158,7 @@ public class ScanActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
-                handler.postDelayed(runnable, 5000);
+                handler.postDelayed(runnable, SystemProperties.getInt(PS_DURATION, 1000*60*5));
 
             }
 
@@ -188,8 +192,8 @@ public class ScanActivity extends AppCompatActivity {
             } else {
                 handler.removeCallbacks(runnable2);
                 scanDecode.starScan();
-                handler.postDelayed(runnable2, 2000);
-                handler.postDelayed(startTask, 4000);
+                handler.postDelayed(runnable2, SystemProperties.getInt(PS_INTERVAL, 1000));
+                handler.postDelayed(startTask, SystemProperties.getInt(PS_INTERVAL, 1000) * 2);
             }
 
             mTimesScan = true;
