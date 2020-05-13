@@ -53,6 +53,11 @@ public class ScanActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
+    /**
+     * 是否有扫描结果
+     */
+    private boolean isResult = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,14 +74,19 @@ public class ScanActivity extends AppCompatActivity {
         mTimes = findViewById(R.id.btn_times);
         tvcound = findViewById(R.id.tv_cound);
         mTimesScan = false;
+        //连续触发单次扫描
         mTimes.setOnClickListener(v -> {
             if (mTimesScan) {
                 handler.removeCallbacks(startTask);
+                handler.removeCallbacks(runnable);
+                handler.removeCallbacks(runnable2);
                 scanDecode.stopScan();
                 mTimesScan = false;
                 mTimes.setText(getString(R.string.start_times));
             } else {
                 handler.removeCallbacks(startTask);
+                handler.removeCallbacks(runnable);
+                handler.removeCallbacks(runnable2);
                 handler.postDelayed(startTask, 0);
                 mTimesScan = true;
                 mTimes.setText(getString(R.string.stop_times));
@@ -92,12 +102,14 @@ public class ScanActivity extends AppCompatActivity {
         mSettings = findViewById(R.id.title_settings);
         mSettings.setOnClickListener(v -> new EndWindow(ScanActivity.this).showAtLocation(mSettings, Gravity.START, 0, 0));
         mClear = findViewById(R.id.title_clear);
+        //清空显示内容
         mClear.setOnClickListener(v -> {
             mList.clear();
             mAdapter.notifyDataSetChanged();
             scancount = 0;
             tvcound.setText("");
         });
+        //单次扫描
         mSingle.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP: {
@@ -105,6 +117,8 @@ public class ScanActivity extends AppCompatActivity {
                         mTimes.performClick();
                     } else {
                         handler.removeCallbacks(startTask);
+                        handler.removeCallbacks(runnable);
+                        handler.removeCallbacks(runnable2);
                         scanDecode.stopScan();
                     }
                     break;
@@ -118,10 +132,19 @@ public class ScanActivity extends AppCompatActivity {
             }
             return false;
         });
+        //获取扫描结果
         scanDecode.getBarCode(new ScanInterface.OnScanListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void getBarcode(String data) {
+
+                handler.removeCallbacks(runnable);
+                if (!isResult) {
+                    handler.removeCallbacks(startTask);
+                    handler.removeCallbacks(runnable2);
+                    handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
+                }
+                isResult = true;
                 if (recyclerView.getBackground() != null) {
                     recyclerView.setBackground(null);
                 }
@@ -130,7 +153,11 @@ public class ScanActivity extends AppCompatActivity {
                 mList.add(data);
                 mAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                handler.postDelayed(runnable, 5000);
+
             }
+
             @Override
             public void getBarcodeByte(byte[] bytes) {
             }
@@ -153,9 +180,36 @@ public class ScanActivity extends AppCompatActivity {
     private Runnable startTask = new Runnable() {
         @Override
         public void run() {
-            scanDecode.starScan();
-            handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
+
+            if (isResult) {
+                handler.removeCallbacks(runnable2);
+                scanDecode.starScan();
+                handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
+            } else {
+                handler.removeCallbacks(runnable2);
+                scanDecode.starScan();
+                handler.postDelayed(runnable2, 2000);
+                handler.postDelayed(startTask, 4000);
+            }
+
             mTimesScan = true;
+        }
+    };
+
+    /**
+     * 长时间扫描
+     */
+    private Runnable runnable = () -> isResult = false;
+    private Runnable runnable2 = new Runnable() {
+        @Override
+        public void run() {
+            if (!isResult) {
+                scanDecode.stopScan();
+            } else {
+                handler.removeCallbacks(startTask);
+                handler.postDelayed(startTask, 0);
+            }
+
         }
     };
 
@@ -167,22 +221,23 @@ public class ScanActivity extends AppCompatActivity {
         mTimesScan = false;
         scanDecode.stopScan();
         handler.removeCallbacks(startTask);
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(runnable2);
         scanDecode.onDestroy();
         super.onDestroy();
     }
 
     @SuppressLint("WrongConstant")
-    @Subscribe( threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(WeightEvent event) {
-        switch (event.getMessage()) {
-            case "explore":
-                outPutFile();
-                break;
-            default:
-                break;
+        if ("explore".equals(event.getMessage())) {
+            outPutFile();
         }
     }
 
+    /**
+     * 导出扫描结果文件
+     */
     private void outPutFile() {
         if (mList.size() == 0) {
             ToastUtils.showShortToastSafe(R.string.no_file);
@@ -195,6 +250,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 创建导出文件的名字          Create export file name
+     *
      * @return 完整文件路径+名     Full file path + name
      */
     @SuppressLint("SdCardPath")
@@ -208,13 +264,13 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 更新文件显示的广播，在生成文件后调用一次。
-     *Update the broadcast shown by the file, called once after the file is generated.
+     * Update the broadcast shown by the file, called once after the file is generated.
      */
     public static void scanFile(Context context, String filePath, int h) {
         Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         scanIntent.setData(Uri.fromFile(new File(filePath)));
         context.sendBroadcast(scanIntent);
-        if (h == 1){
+        if (h == 1) {
             ToastUtils.showShortToastSafe(R.string.explore_success);
         }
     }
