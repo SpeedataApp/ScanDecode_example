@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,15 +73,22 @@ public class ScanActivity extends AppCompatActivity {
         mTimes.setOnClickListener(v -> {
             if (mTimesScan) {
                 handler.removeCallbacks(startTask);
-                scanDecode.stopScan();
+                handler.removeCallbacks(startScan);
+                sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
                 mTimesScan = false;
                 mTimes.setText(getString(R.string.start_times));
             } else {
-                handler.removeCallbacks(startTask);
-                handler.postDelayed(startTask, 0);
-                mTimesScan = true;
-                mTimes.setText(getString(R.string.stop_times));
+                if ((System.currentTimeMillis() - mkeyTime) > 1000) {
+                    mkeyTime = System.currentTimeMillis();
 
+                    handler.removeCallbacks(startTask);
+                    handler.removeCallbacks(startScan);
+                    handler.postDelayed(startTask, 0);
+                    mTimesScan = true;
+                    mTimes.setText(getString(R.string.stop_times));
+                } else {
+                    ToastUtils.showShortToastSafe(R.string.please_do_not_click);
+                }
             }
         });
         recyclerView = findViewById(R.id.rv_content);
@@ -105,12 +113,18 @@ public class ScanActivity extends AppCompatActivity {
                         mTimes.performClick();
                     } else {
                         handler.removeCallbacks(startTask);
-                        scanDecode.stopScan();
+                        handler.removeCallbacks(startScan);
+                        sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
                     }
                     break;
                 }
                 case MotionEvent.ACTION_DOWN: {
-                    scanDecode.starScan();
+                    if ((System.currentTimeMillis() - mkeyTime) > 500) {
+                        mkeyTime = System.currentTimeMillis();
+                        handler.postDelayed(startScan, 0);
+                    } else {
+                        ToastUtils.showShortToastSafe(R.string.please_do_not_click);
+                    }
                     break;
                 }
                 default:
@@ -131,6 +145,7 @@ public class ScanActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
             }
+
             @Override
             public void getBarcodeByte(byte[] bytes) {
             }
@@ -150,13 +165,23 @@ public class ScanActivity extends AppCompatActivity {
      * 连续扫描
      * Continuous scan
      */
-    private Runnable startTask = new Runnable() {
+    private final Runnable startTask = new Runnable() {
         @Override
         public void run() {
-            scanDecode.starScan();
+            sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
+            handler.postDelayed(startScan, 200);
             handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
             mTimesScan = true;
         }
+    };
+
+    /**
+     * 开始扫描
+     * start scan
+     */
+    private final Runnable startScan = () -> {
+        sendBroadcast(new Intent("com.geomobile.se4500barcode"));
+        SystemProperties.set("persist.sys.scanstopimme", "false");
     };
 
     @Override
@@ -165,14 +190,15 @@ public class ScanActivity extends AppCompatActivity {
             EventBus.getDefault().unregister(this);
         }
         mTimesScan = false;
-        scanDecode.stopScan();
+        sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
         handler.removeCallbacks(startTask);
+        handler.removeCallbacks(startScan);
         scanDecode.onDestroy();
         super.onDestroy();
     }
 
     @SuppressLint("WrongConstant")
-    @Subscribe( threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(WeightEvent event) {
         switch (event.getMessage()) {
             case "explore":
@@ -195,6 +221,7 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 创建导出文件的名字          Create export file name
+     *
      * @return 完整文件路径+名     Full file path + name
      */
     @SuppressLint("SdCardPath")
@@ -208,13 +235,13 @@ public class ScanActivity extends AppCompatActivity {
 
     /**
      * 更新文件显示的广播，在生成文件后调用一次。
-     *Update the broadcast shown by the file, called once after the file is generated.
+     * Update the broadcast shown by the file, called once after the file is generated.
      */
     public static void scanFile(Context context, String filePath, int h) {
         Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         scanIntent.setData(Uri.fromFile(new File(filePath)));
         context.sendBroadcast(scanIntent);
-        if (h == 1){
+        if (h == 1) {
             ToastUtils.showShortToastSafe(R.string.explore_success);
         }
     }
