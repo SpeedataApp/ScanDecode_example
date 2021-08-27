@@ -42,6 +42,7 @@ public class EndWindow extends PopupWindow {
         TextView mCodeSet = popupView.findViewById(R.id.code_set);
         TextView mBalanceSet = popupView.findViewById(R.id.balance_set);
         TextView mInterval = popupView.findViewById(R.id.interval_set);
+        TextView mExcel = popupView.findViewById(R.id.excel_settings);
         TextView mExit = popupView.findViewById(R.id.exit_settings);
 
         if ("false".equals(SystemProperties.get("persist.sys.playscanmusic"))) {
@@ -96,13 +97,22 @@ public class EndWindow extends PopupWindow {
 
         });
 
-        //导出
+        //导出excel
+        //explore
+        mExcel.setOnClickListener(v -> {
+            dismiss();
+            EventBus.getDefault().postSticky(new WeightEvent("excel", ""));
+
+        });
+
+        //导出txt
         //explore
         mExit.setOnClickListener(v -> {
             dismiss();
             EventBus.getDefault().postSticky(new WeightEvent("explore", ""));
 
         });
+
 
         popupView.setOnClickListener(v -> dismiss());
 

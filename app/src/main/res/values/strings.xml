@@ -45,5 +45,7 @@
     <string name="scan_interval">Change Interval</string>
     <string name="change">Change Interval:</string>
     <string name="please_do_not_click">Please do not click the virtual scan button frequently</string>
+    <string name="txt">Explore txt</string>
+    <string name="excel">Explore excel</string>
 
 </resources>

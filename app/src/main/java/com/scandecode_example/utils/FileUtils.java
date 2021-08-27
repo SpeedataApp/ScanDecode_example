@@ -1,6 +1,8 @@
 package com.scandecode_example.utils;
 
 
+import com.scandecode_example.model.DataBean;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +24,7 @@ public class FileUtils {
      * @param filename
      * @return
      */
-    public int outputOnefile(List<String> list, String filename) {
+    public int outputOnefile(List<DataBean> list, String filename) {
 
         BufferedWriter bw = null;
         try {
@@ -30,7 +32,7 @@ public class FileUtils {
             for (int i = 0; i < list.size(); i++) {
                 //拿字符串
                 //Take string
-                String str = list.get(i);
+                String str = list.get(i).getBarcode();
 
                 String over = str + "\r\n";
                 // 写文件

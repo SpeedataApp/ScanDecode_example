@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemProperties;
 import android.support.v7.app.AppCompatActivity;
@@ -21,10 +22,12 @@ import android.widget.TextView;
 import com.scandecode.ScanDecode;
 import com.scandecode.inf.ScanInterface;
 import com.scandecode_example.adapter.UnitAdapter;
+import com.scandecode_example.model.DataBean;
 import com.scandecode_example.model.WeightEvent;
 import com.scandecode_example.utils.FileUtils;
 import com.scandecode_example.utils.SpUtils;
 import com.scandecode_example.utils.ToastUtils;
+import com.scandecode_example.utils.excel.ExcelUtils;
 import com.scandecode_example.view.EndWindow;
 import com.speedata.utils.MyDateAndTime;
 
@@ -36,6 +39,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import jxl.format.Colour;
+
 /**
  * @author xuyan  Example page to implement scan-related functions
  */
@@ -46,13 +51,15 @@ public class ScanActivity extends AppCompatActivity {
     private ImageView mSettings;
     private TextView mClear;
     private UnitAdapter mAdapter;
-    private List<String> mList;
+    private List<DataBean> mList;
     private boolean mTimesScan;
     private TextView tvcound;
     private int scancount = 0;
     private ScanInterface scanDecode;
 
     private RecyclerView recyclerView;
+
+    private DataBean dataBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class ScanActivity extends AppCompatActivity {
         initView();
     }
 
-    @SuppressLint({"ClickableViewAccessibility", "NewApi"})
+    @SuppressLint({"ClickableViewAccessibility", "NewApi", "NotifyDataSetChanged"})
     private void initView() {
         EventBus.getDefault().register(this);
         scanDecode = new ScanDecode(this);
@@ -133,7 +140,7 @@ public class ScanActivity extends AppCompatActivity {
             return false;
         });
         scanDecode.getBarCode(new ScanInterface.OnScanListener() {
-            @SuppressLint("SetTextI18n")
+            @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
             @Override
             public void getBarcode(String data) {
                 if (recyclerView.getBackground() != null) {
@@ -141,7 +148,9 @@ public class ScanActivity extends AppCompatActivity {
                 }
                 scancount += 1;
                 tvcound.setText(getString(R.string.scan_time) + scancount + "");
-                mList.add(data);
+                dataBean = new DataBean();
+                dataBean.setBarcode(data);
+                mList.add(dataBean);
                 mAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
             }
@@ -204,9 +213,42 @@ public class ScanActivity extends AppCompatActivity {
             case "explore":
                 outPutFile();
                 break;
+            case "excel":
+                outPutExcel();
+                break;
             default:
                 break;
         }
+    }
+
+    private void outPutExcel() {
+        if (mList.size() == 0) {
+            ToastUtils.showShortToastSafe(R.string.no_file);
+            return;
+        }
+
+
+        //导出数据 查询数据生成文件，生成后删除数据
+        String name = MyDateAndTime.getMakerDate();
+        //导出excel
+        try {
+
+            ExcelUtils.getInstance()
+                    .setSHEET_NAME(name)//设置表格名称
+                    .setFONT_COLOR(Colour.BLUE)//设置标题字体颜色
+                    .setFONT_TIMES(8)//设置标题字体大小
+                    .setFONT_BOLD(true)//设置标题字体是否斜体
+                    .setBACKGROND_COLOR(Colour.GRAY_25)//设置标题背景颜色
+                    .setContent_list_Strings(mList)//设置excel内容
+                    .setWirteExcelPath(Environment.getExternalStorageDirectory() + File.separator + name + ".xls")
+                    .createExcel(ScanActivity.this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        scanFile(this, Environment.getExternalStorageDirectory() + File.separator + name + ".xls", 1);
     }
 
     private void outPutFile() {

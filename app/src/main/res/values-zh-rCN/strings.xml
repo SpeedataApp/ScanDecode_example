@@ -45,4 +45,6 @@
     <string name="scan_interval">切换扫描间隔</string>
     <string name="change">切换扫描间隔:</string>
     <string name="please_do_not_click">请不要频繁点击虚拟扫描按键</string>
+    <string name="txt">导出txt</string>
+    <string name="excel">导出excel</string>
 </resources>
