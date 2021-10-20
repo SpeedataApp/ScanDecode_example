@@ -88,7 +88,7 @@ public class EndWindow extends PopupWindow {
             //Round directly between 1-5, default is 2
             int level = (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 500) + 500;
 
-            if (level >= 5500) {
+            if (level >= 10500) {
                 level = 500;
             }
 
