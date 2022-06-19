@@ -3,7 +3,6 @@ package com.scandecode_example.view;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.SystemProperties;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.scandecode_example.AppDecode;
 import com.scandecode_example.R;
+import com.scandecode_example.ScanActivity;
 import com.scandecode_example.SpdConstant;
 import com.scandecode_example.model.WeightEvent;
 import com.scandecode_example.utils.SpUtils;
@@ -27,7 +27,7 @@ public class EndWindow extends PopupWindow {
 
 
     @SuppressLint({"NewApi", "SetTextI18n"})
-    public EndWindow(AppCompatActivity mContext) {
+    public EndWindow(ScanActivity mContext) {
 
         Activity activity = mContext;
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();

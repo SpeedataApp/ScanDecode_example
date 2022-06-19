@@ -3,9 +3,10 @@ package com.scandecode_example.utils;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.StringRes;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import androidx.annotation.StringRes;
 
 import com.scandecode_example.AppDecode;
 
