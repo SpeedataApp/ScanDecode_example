@@ -93,11 +93,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         toggleButtonSound.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if (isChecked) {
-                SystemProperties.set("persist.sys.playscanmusic", "true");
-            } else {
-                SystemProperties.set("persist.sys.playscanmusic", "false");
-            }
+//            if (isChecked) {
+//                SystemProperties.set("persist.sys.playscanmusic", "true");
+//            } else {
+//                SystemProperties.set("persist.sys.playscanmusic", "false");
+//            }
         });
 
         //Vibrator
@@ -106,11 +106,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         toggleButtonVibrate.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if (isChecked) {
-                SystemProperties.set("persist.sys.scanvibrate", "true");
-            } else {
-                SystemProperties.set("persist.sys.scanvibrate", "false");
-            }
+//            if (isChecked) {
+//                SystemProperties.set("persist.sys.scanvibrate", "true");
+//            } else {
+//                SystemProperties.set("persist.sys.scanvibrate", "false");
+//            }
 
         });
 

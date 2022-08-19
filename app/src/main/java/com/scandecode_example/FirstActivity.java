@@ -1,5 +1,7 @@
 package com.scandecode_example;
 
+import static com.scandecode_example.SpdConstant.SCAN_KEY_REPORT;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,15 +10,13 @@ import android.provider.Settings;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.scandecode_example.utils.ToastUtils;
-
-import static com.scandecode_example.SpdConstant.SCAN_KEY_REPORT;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.scandecode_example.utils.ToastUtils;
 
 /**
  * @author xuyan  首页面跳转，检测是否能扫描
- *  Jump to the page, check if you can scan
+ * Jump to the page, check if you can scan
  */
 public class FirstActivity extends AppCompatActivity {
 
@@ -51,8 +51,8 @@ public class FirstActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (("true".equals(SystemProperties.get(SCAN_KEY_REPORT, "false")))
-            // && ("true".equals(SystemProperties.get(SCAN_KEY_DISABLE, "false")))
+        if (("true".equals(SystemProperties.get(SCAN_KEY_REPORT, "true")))
+//            // && ("true".equals(SystemProperties.get(SCAN_KEY_DISABLE, "false")))
         ) {
             startActivity(new Intent(FirstActivity.this, ScanActivity.class));
             finish();
