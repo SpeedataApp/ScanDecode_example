@@ -32,7 +32,8 @@
             android:gravity="center_vertical"
             android:text="@string/sound"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="invisible" />
 
 
         <View
@@ -52,7 +53,8 @@
             android:gravity="center_vertical"
             android:text="@string/vib"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="invisible" />
 
 
         <View
@@ -85,7 +87,6 @@
     </LinearLayout>
 
     <TextView
-
         android:id="@+id/excel_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,11 +101,11 @@
         android:text="@string/excel"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/exit_settings"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-
         android:id="@+id/exit_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,6 +120,7 @@
         android:text="@string/txt"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

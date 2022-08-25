@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "com.scandecode_example"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 6
         versionName "1.5"
@@ -42,6 +42,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.2'
-
+    implementation files('libs/scandecode-release.aar')
+    implementation files('libs/deivice-release.aar')
 //    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.42'
 }
