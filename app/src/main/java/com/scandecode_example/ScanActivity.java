@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.SystemProperties;
-
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -70,7 +68,7 @@ public class ScanActivity extends AppCompatActivity {
         initView();
     }
 
-    @SuppressLint({"ClickableViewAccessibility", "NewApi", "NotifyDataSetChanged"})
+    @SuppressLint({"ClickableViewAccessibility", "NewApi", "NotifyDataSetChanged", "UseCompatLoadingForDrawables"})
     private void initView() {
         EventBus.getDefault().register(this);
         scanDecode = new ScanDecode(this);
@@ -192,7 +190,7 @@ public class ScanActivity extends AppCompatActivity {
      */
     private final Runnable startScan = () -> {
         sendBroadcast(new Intent("com.geomobile.se4500barcode"));
-        SystemProperties.set("persist.sys.scanstopimme", "false");
+        //SystemProperties.set("persist.sys.scanstopimme", "false");
     };
 
     @Override
