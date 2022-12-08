@@ -1,11 +1,8 @@
 package com.scandecode_example;
 
-import static com.scandecode_example.SpdConstant.SCAN_KEY_REPORT;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemProperties;
 import android.provider.Settings;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,7 +27,7 @@ public class FirstActivity extends AppCompatActivity {
         initView();
     }
 
-    @SuppressLint("NewApi")
+    @SuppressLint({"NewApi", "UseCompatLoadingForDrawables"})
     private void initView() {
 
         mSetting = findViewById(R.id.btn_set);
@@ -51,11 +48,11 @@ public class FirstActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (("true".equals(SystemProperties.get(SCAN_KEY_REPORT, "true")))
-//            // && ("true".equals(SystemProperties.get(SCAN_KEY_DISABLE, "false")))
-        ) {
-            startActivity(new Intent(FirstActivity.this, ScanActivity.class));
-            finish();
-        }
+//        if (("true".equals(SystemProperties.get(SCAN_KEY_REPORT, "true")))
+////            // && ("true".equals(SystemProperties.get(SCAN_KEY_DISABLE, "false")))
+//        ) {
+        startActivity(new Intent(FirstActivity.this, ScanActivity.class));
+        finish();
+//        }
     }
 }

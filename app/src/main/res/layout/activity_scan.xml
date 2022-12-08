@@ -41,7 +41,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@drawable/bg_bt_xz"
+
+        android:background="@color/blue"
         android:text="@string/single"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,12 +50,15 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!--android:background="@drawable/bg_bt_xz" -->
+
     <Button
         android:id="@+id/btn_times"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@drawable/bg_bt_xz"
+
+        android:background="@color/red"
         android:text="@string/times"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,12 +1,26 @@
 package com.scandecode_example;
 
+import static com.scandecode_example.SpdConstant.DEF_direction;
+import static com.scandecode_example.SpdConstant.DEF_direction_init;
+import static com.scandecode_example.SpdConstant.DEF_direction_scan;
+import static com.scandecode_example.SpdConstant.DEF_start;
+import static com.scandecode_example.SpdConstant.DEF_value;
+import static com.scandecode_example.SpdConstant.DEF_value_init;
+import static com.scandecode_example.SpdConstant.DEF_value_scan;
+
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
+import android.os.SystemProperties;
+import android.serialport.SerialPortSpd;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -19,8 +33,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.scandecode.ScanDecode;
-import com.scandecode.inf.ScanInterface;
 import com.scandecode_example.adapter.UnitAdapter;
 import com.scandecode_example.model.DataBean;
 import com.scandecode_example.model.WeightEvent;
@@ -29,20 +41,31 @@ import com.scandecode_example.utils.SpUtils;
 import com.scandecode_example.utils.ToastUtils;
 import com.scandecode_example.utils.excel.ExcelUtils;
 import com.scandecode_example.view.EndWindow;
+import com.speedata.libutils.DataConversionUtils;
 import com.speedata.utils.MyDateAndTime;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import jxl.format.Colour;
 
 /**
  * @author xuyan  Example page to implement scan-related functions
+ * <p>
+ * 初始化开关串口与GPIO，显示串口返回的扫描数据。
+ * <p>
+ * HG050C定制版扫描demo
  */
 public class ScanActivity extends AppCompatActivity {
 
@@ -55,33 +78,50 @@ public class ScanActivity extends AppCompatActivity {
     private boolean mTimesScan;
     private TextView tvcound;
     private int scancount = 0;
-    private ScanInterface scanDecode;
 
     private RecyclerView recyclerView;
 
     private DataBean dataBean;
 
+    private static final String TAG = "SerialPort";
+
+    private SerialPortSpd mSerialPort = null;
+    private ReadThread mReadThread;
+    //private Handler handler = null;
+    private String readstr = "";
+    private byte[] tmpbuf = new byte[1024];
+    private int fd;
+
+
+    private BroadcastReceiver mDisplayReceiver;
+    private int readed = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+
         initView();
+
+        initBarcode();
+
     }
+
 
     @SuppressLint({"ClickableViewAccessibility", "NewApi", "NotifyDataSetChanged", "UseCompatLoadingForDrawables"})
     private void initView() {
         EventBus.getDefault().register(this);
-        scanDecode = new ScanDecode(this);
-        scanDecode.initService("true");
+
         mSingle = findViewById(R.id.btn_onetime);
         mTimes = findViewById(R.id.btn_times);
         tvcound = findViewById(R.id.tv_cound);
         mTimesScan = false;
+        //重复扫描
         mTimes.setOnClickListener(v -> {
             if (mTimesScan) {
                 handler.removeCallbacks(startTask);
                 handler.removeCallbacks(startScan);
-                sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
+
                 mTimesScan = false;
                 mTimes.setText(getString(R.string.start_times));
             } else {
@@ -113,6 +153,8 @@ public class ScanActivity extends AppCompatActivity {
             scancount = 0;
             tvcound.setText("");
         });
+
+        //单次扫描，按下开始抬起结束
         mSingle.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP: {
@@ -121,7 +163,7 @@ public class ScanActivity extends AppCompatActivity {
                     } else {
                         handler.removeCallbacks(startTask);
                         handler.removeCallbacks(startScan);
-                        sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
+
                     }
                     break;
                 }
@@ -139,26 +181,7 @@ public class ScanActivity extends AppCompatActivity {
             }
             return false;
         });
-        scanDecode.getBarCode(new ScanInterface.OnScanListener() {
-            @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
-            @Override
-            public void getBarcode(String data) {
-                if (recyclerView.getBackground() != null) {
-                    recyclerView.setBackground(null);
-                }
-                scancount += 1;
-                tvcound.setText(getString(R.string.scan_time) + scancount + "");
-                dataBean = new DataBean();
-                dataBean.setBarcode(data);
-                mList.add(dataBean);
-                mAdapter.notifyDataSetChanged();
-                recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-            }
 
-            @Override
-            public void getBarcodeByte(byte[] bytes) {
-            }
-        });
 
         boolean cn = "CN".equals(getApplicationContext().getResources().getConfiguration().locale.getCountry());
         if (cn) {
@@ -171,13 +194,13 @@ public class ScanActivity extends AppCompatActivity {
     Handler handler = new Handler();
 
     /**
-     * 连续扫描
+     * 连续扫描，有间隔地不停触发扫描
      * Continuous scan
      */
     private final Runnable startTask = new Runnable() {
         @Override
         public void run() {
-            sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
+
             handler.postDelayed(startScan, 200);
             handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
             mTimesScan = true;
@@ -185,26 +208,14 @@ public class ScanActivity extends AppCompatActivity {
     };
 
     /**
-     * 开始扫描
+     * 开始扫描，先判断是不是开机后第一次。
      * start scan
      */
     private final Runnable startScan = () -> {
-        sendBroadcast(new Intent("com.geomobile.se4500barcode"));
-        //SystemProperties.set("persist.sys.scanstopimme", "false");
+
+        writeOne(DEF_value_scan);
     };
 
-    @Override
-    protected void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
-        mTimesScan = false;
-        sendBroadcast(new Intent("com.geomobile.se4500barcodestop"));
-        handler.removeCallbacks(startTask);
-        handler.removeCallbacks(startScan);
-        scanDecode.onDestroy();
-        super.onDestroy();
-    }
 
     @SuppressLint("WrongConstant")
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -321,5 +332,230 @@ public class ScanActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    //====================================扫描服务集成=======================================
+
+    //简单判断isutf8
+    private boolean isUTF8(byte[] sx) {
+        Log.d(TAG, "begian to isUTF8");
+        for (int i = 0; i < sx.length; ) {
+            if (sx[i] < 0) {
+                if ((sx[i] >>> 5) == 0x7FFFFFE) {
+                    if (((i + 1) < sx.length) && ((sx[i + 1] >>> 6) == 0x3FFFFFE)) {
+                        i = i + 2;
+                    } else {
+                        return false;
+                    }
+                } else if ((sx[i] >>> 4) == 0xFFFFFFE) {
+                    if (((i + 2) < sx.length) && ((sx[i + 1] >>> 6) == 0x3FFFFFE) && ((sx[i + 2] >>> 6) == 0x3FFFFFE)) {
+                        i = i + 3;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                i++;
+            }
+        }
+        return true;
+    }
+
+    @SuppressLint("HandlerLeak")
+    private void initBarcode() {
+
+        if (SystemProperties.getBoolean(DEF_start, true)) {
+            //3个Gpio初始化
+            initFirst(DEF_direction);
+            initFirst(DEF_direction_init);
+            initFirst(DEF_direction_scan);
+            SystemProperties.set(DEF_start, "false");
+        }
+
+        //2个上电
+        writeOne(DEF_value);
+        writeOne(DEF_value_init);
+
+        //handler初始化，在这里处理显示扫描结果
+        handler = new Handler() {
+
+            @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+
+                    String data = (String) msg.obj;
+
+                    if (recyclerView.getBackground() != null) {
+                        recyclerView.setBackground(null);
+                    }
+                    scancount += 1;
+                    tvcound.setText(getString(R.string.scan_time) + scancount + "");
+                    dataBean = new DataBean();
+                    dataBean.setBarcode(data);
+                    mList.add(dataBean);
+                    mAdapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                }
+
+            }
+        };
+
+
+        //初始化串口，开始读串口2
+        mSerialPort = new SerialPortSpd();
+
+        try {
+
+            mSerialPort.OpenSerial(SerialPortSpd.SERIAL_TTYS2, 9600);
+
+            if (mSerialPort != null) {
+                Log.d(TAG, "open SerialPort success");
+                fd = mSerialPort.getFd();
+                mReadThread = new ReadThread();
+                mReadThread.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //注册广播休眠停止扫描。
+        mDisplayReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (Objects.requireNonNull(action).equals(Intent.ACTION_SCREEN_OFF)) {
+                    writeZero(DEF_value);
+                } else if (Objects.requireNonNull(action).equals(Intent.ACTION_SCREEN_ON)) {
+                    writeZero(DEF_value);
+                }
+            }
+        };
+        final IntentFilter se4500dispfilter = new IntentFilter();
+
+        se4500dispfilter.addAction(Intent.ACTION_SCREEN_OFF);
+        se4500dispfilter.addAction(Intent.ACTION_SCREEN_ON);
+
+        registerReceiver(mDisplayReceiver, se4500dispfilter);
+
+    }
+
+
+    //停止扫描下电写0
+    private void writeZero(String pathwhat) {
+
+        try {
+            File mScanDeviceName = new File(pathwhat);
+            BufferedWriter mScanCtrlFileWrite = new BufferedWriter(new FileWriter(mScanDeviceName, false));
+            mScanCtrlFileWrite.write("0");
+            mScanCtrlFileWrite.flush();
+            mScanCtrlFileWrite.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //开始扫描上电写1
+    private void writeOne(String pathwhat) {
+
+        try {
+            //File ScanDeviceName = new File("proc/driver/scan");
+            File mScanDeviceName = new File(pathwhat);
+            BufferedWriter mScanCtrlFileWrite = new BufferedWriter(new FileWriter(mScanDeviceName, false));
+            mScanCtrlFileWrite.write("1");
+            mScanCtrlFileWrite.flush();
+            mScanCtrlFileWrite.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //首次扫描前写成out
+    private void initFirst(String pathwhat) {
+
+        try {
+            File mScanDeviceName = new File(pathwhat);
+            BufferedWriter mScanCtrlFileWrite = new BufferedWriter(new FileWriter(mScanDeviceName, false));
+            mScanCtrlFileWrite.write("out");
+            mScanCtrlFileWrite.flush();
+            mScanCtrlFileWrite.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //退出程序解除注册等
+    @Override
+    public void onDestroy() {
+        mReadThread.interrupt();
+
+        writeZero(DEF_value_scan);
+
+        writeZero(DEF_value);
+        writeZero(DEF_value_init);
+
+        unregisterReceiver(mDisplayReceiver);
+        mSerialPort.CloseSerial(fd);
+
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+        mTimesScan = false;
+
+        handler.removeCallbacks(startTask);
+        handler.removeCallbacks(startScan);
+
+        super.onDestroy();
+    }
+
+
+    //从串口读结果并发给handler
+    private class ReadThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            while (!isInterrupted()) {
+                try {
+                    try {
+                        tmpbuf = mSerialPort.ReadSerial(fd, 1024, 200);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (tmpbuf != null && (DataConversionUtils.byteArrayToInt(new byte[]{tmpbuf[0]}) < 240)) {
+                        readed = tmpbuf.length;
+                        byte[] readbuf = new byte[readed];
+                        System.arraycopy(tmpbuf, 0, readbuf, 0, readed);
+                        if (isUTF8(readbuf)) {
+                            readstr = new String(readbuf, StandardCharsets.UTF_8);
+                            Log.d(TAG, "is a utf8 string");
+                        } else {
+                            readstr = new String(readbuf, "gbk");
+                            Log.d(TAG, "is a gbk string");
+                        }
+
+                        if (readstr != null) {
+                            //为扫描结果添加已经存储的前后缀
+
+                            Message msg = new Message();
+                            msg.what = 1;
+                            msg.obj = readstr;
+                            handler.sendMessage(msg);
+                        }
+                    }
+                } catch (SecurityException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
 
 }
