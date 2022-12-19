@@ -28,8 +28,11 @@ public class SpdConstant {
     public static final String DEF_direction_init = "/sys/class/gpio/gpio123/direction";
     public static final String DEF_value_init = "/sys/class/gpio/gpio123/value";
 
-    public static final String DEF_direction_scan = "/sys/class/gpio/gpio244/direction";
-    public static final String DEF_value_scan = "/sys/class/gpio/gpio244/value";
+    public static final String DEF_direction_scan = "/sys/class/gpio/gpio224/direction";
+    public static final String DEF_value_scan = "/sys/class/gpio/gpio224/value";
+
+    public static final String DEF_direction_fuwei = "/sys/class/gpio/gpio206/direction";
+    public static final String DEF_value_fuwei = "/sys/class/gpio/gpio206/value";
 
     public static final String DEF_start = "start.barcode.first";
 

@@ -1,10 +1,12 @@
 package com.scandecode_example;
 
 import static com.scandecode_example.SpdConstant.DEF_direction;
+import static com.scandecode_example.SpdConstant.DEF_direction_fuwei;
 import static com.scandecode_example.SpdConstant.DEF_direction_init;
 import static com.scandecode_example.SpdConstant.DEF_direction_scan;
 import static com.scandecode_example.SpdConstant.DEF_start;
 import static com.scandecode_example.SpdConstant.DEF_value;
+import static com.scandecode_example.SpdConstant.DEF_value_fuwei;
 import static com.scandecode_example.SpdConstant.DEF_value_init;
 import static com.scandecode_example.SpdConstant.DEF_value_scan;
 
@@ -163,14 +165,15 @@ public class ScanActivity extends AppCompatActivity {
                     } else {
                         handler.removeCallbacks(startTask);
                         handler.removeCallbacks(startScan);
-
+                        writeOne(DEF_value_scan);
                     }
                     break;
                 }
                 case MotionEvent.ACTION_DOWN: {
                     if ((System.currentTimeMillis() - mkeyTime) > 500) {
+                        writeZero(DEF_value_scan);
                         mkeyTime = System.currentTimeMillis();
-                        handler.postDelayed(startScan, 0);
+                        handler.postDelayed(startScan, 200);
                     } else {
                         ToastUtils.showShortToastSafe(R.string.please_do_not_click);
                     }
@@ -200,7 +203,7 @@ public class ScanActivity extends AppCompatActivity {
     private final Runnable startTask = new Runnable() {
         @Override
         public void run() {
-
+            //writeZero(DEF_value_scan);
             handler.postDelayed(startScan, 200);
             handler.postDelayed(startTask, (int) SpUtils.get(AppDecode.getInstance(), SpdConstant.INTERVAL_LEVEL, 2000));
             mTimesScan = true;
@@ -212,8 +215,8 @@ public class ScanActivity extends AppCompatActivity {
      * start scan
      */
     private final Runnable startScan = () -> {
-
-        writeOne(DEF_value_scan);
+        writeZero(DEF_value_scan);
+        //writeOne(DEF_value_scan);
     };
 
 
@@ -369,6 +372,7 @@ public class ScanActivity extends AppCompatActivity {
             //3个Gpio初始化
             initFirst(DEF_direction);
             initFirst(DEF_direction_init);
+            initFirst(DEF_direction_fuwei);
             initFirst(DEF_direction_scan);
             SystemProperties.set(DEF_start, "false");
         }
@@ -376,6 +380,8 @@ public class ScanActivity extends AppCompatActivity {
         //2个上电
         writeOne(DEF_value);
         writeOne(DEF_value_init);
+        writeOne(DEF_value_fuwei);
+        writeOne(DEF_value_scan);
 
         //handler初始化，在这里处理显示扫描结果
         handler = new Handler() {
@@ -497,6 +503,7 @@ public class ScanActivity extends AppCompatActivity {
         writeZero(DEF_value_scan);
 
         writeZero(DEF_value);
+        writeZero(DEF_value_fuwei);
         writeZero(DEF_value_init);
 
         unregisterReceiver(mDisplayReceiver);
@@ -509,7 +516,7 @@ public class ScanActivity extends AppCompatActivity {
 
         handler.removeCallbacks(startTask);
         handler.removeCallbacks(startScan);
-
+        SystemProperties.set(DEF_start, "true");
         super.onDestroy();
     }
 

@@ -57,7 +57,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-
+        android:visibility="invisible"
         android:background="@color/red"
         android:text="@string/times"
         android:textColor="@color/white"
