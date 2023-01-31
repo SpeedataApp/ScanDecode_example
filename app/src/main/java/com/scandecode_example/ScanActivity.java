@@ -61,6 +61,8 @@ import java.util.List;
 import java.util.Objects;
 
 import jxl.format.Colour;
+import me.f1reking.serialportlib.SerialPortHelper;
+import me.f1reking.serialportlib.listener.ISerialPortDataListener;
 
 /**
  * @author xuyan  Example page to implement scan-related functions
@@ -87,12 +89,13 @@ public class ScanActivity extends AppCompatActivity {
 
     private static final String TAG = "SerialPort";
 
-    private SerialPortSpd mSerialPort = null;
-    private ReadThread mReadThread;
+    //private SerialPortSpd mSerialPort = null;
+    private SerialPortHelper IDDev; //设备控制
+    //private ReadThread mReadThread;
     //private Handler handler = null;
     private String readstr = "";
     private byte[] tmpbuf = new byte[1024];
-    private int fd;
+    //private int fd;
 
 
     private BroadcastReceiver mDisplayReceiver;
@@ -412,19 +415,25 @@ public class ScanActivity extends AppCompatActivity {
 
 
         //初始化串口，开始读串口2
-        mSerialPort = new SerialPortSpd();
-
+        //mSerialPort = new SerialPortSpd();
+        IDDev = new SerialPortHelper();
         try {
 
-            mSerialPort.OpenSerial(SerialPortSpd.SERIAL_TTYS2, 9600);
-
-            if (mSerialPort != null) {
-                Log.d(TAG, "open SerialPort success");
-                fd = mSerialPort.getFd();
-                mReadThread = new ReadThread();
-                mReadThread.start();
+            //mSerialPort.OpenSerial(SerialPortSpd.SERIAL_TTYS2, 9600);
+            IDDev.setBaudRate(9600);
+            IDDev.setPort(SerialPortSpd.SERIAL_TTYS2);
+            IDDev.setStopBits(1);
+            IDDev.open();
+//            if (mSerialPort != null) {
+//                Log.d(TAG, "open SerialPort success");
+//                fd = mSerialPort.getFd();
+//                mReadThread = new ReadThread();
+//                mReadThread.start();
+//            }
+            if (IDDev != null) {
+                initRcv();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -448,6 +457,53 @@ public class ScanActivity extends AppCompatActivity {
 
         registerReceiver(mDisplayReceiver, se4500dispfilter);
 
+    }
+
+    private void initRcv() {
+        IDDev.setISerialPortDataListener(new ISerialPortDataListener() {
+            @Override
+            public void onDataReceived(byte[] bytes) {
+                if (bytes != null) {
+                    try {
+                        try {
+                            tmpbuf = bytes;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (DataConversionUtils.byteArrayToInt(new byte[]{tmpbuf[0]}) < 240) {
+                            readed = tmpbuf.length;
+                            byte[] readbuf = new byte[readed];
+                            System.arraycopy(tmpbuf, 0, readbuf, 0, readed);
+                            if (isUTF8(readbuf)) {
+                                readstr = new String(readbuf, StandardCharsets.UTF_8);
+                                Log.d(TAG, "is a utf8 string");
+                            } else {
+                                readstr = new String(readbuf, "gbk");
+                                Log.d(TAG, "is a gbk string");
+                            }
+
+                            if (readstr != null) {
+                                //为扫描结果添加已经存储的前后缀
+
+                                Message msg = new Message();
+                                msg.what = 1;
+                                msg.obj = readstr;
+                                handler.sendMessage(msg);
+                            }
+                        }
+                    } catch (SecurityException | UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onDataSend(byte[] bytes) {
+
+            }
+        });
     }
 
 
@@ -498,7 +554,7 @@ public class ScanActivity extends AppCompatActivity {
     //退出程序解除注册等
     @Override
     public void onDestroy() {
-        mReadThread.interrupt();
+        //mReadThread.interrupt();
 
         writeZero(DEF_value_scan);
 
@@ -507,7 +563,11 @@ public class ScanActivity extends AppCompatActivity {
         writeZero(DEF_value_init);
 
         unregisterReceiver(mDisplayReceiver);
-        mSerialPort.CloseSerial(fd);
+        //mSerialPort.CloseSerial(fd);
+        if (IDDev != null) {
+            Log.d(TAG, "close serial port");
+            IDDev.close();
+        }
 
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
@@ -522,47 +582,47 @@ public class ScanActivity extends AppCompatActivity {
 
 
     //从串口读结果并发给handler
-    private class ReadThread extends Thread {
-
-        @Override
-        public void run() {
-            super.run();
-            while (!isInterrupted()) {
-                try {
-                    try {
-                        tmpbuf = mSerialPort.ReadSerial(fd, 1024, 200);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (tmpbuf != null && (DataConversionUtils.byteArrayToInt(new byte[]{tmpbuf[0]}) < 240)) {
-                        readed = tmpbuf.length;
-                        byte[] readbuf = new byte[readed];
-                        System.arraycopy(tmpbuf, 0, readbuf, 0, readed);
-                        if (isUTF8(readbuf)) {
-                            readstr = new String(readbuf, StandardCharsets.UTF_8);
-                            Log.d(TAG, "is a utf8 string");
-                        } else {
-                            readstr = new String(readbuf, "gbk");
-                            Log.d(TAG, "is a gbk string");
-                        }
-
-                        if (readstr != null) {
-                            //为扫描结果添加已经存储的前后缀
-
-                            Message msg = new Message();
-                            msg.what = 1;
-                            msg.obj = readstr;
-                            handler.sendMessage(msg);
-                        }
-                    }
-                } catch (SecurityException | UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
+//    private class ReadThread extends Thread {
+//
+//        @Override
+//        public void run() {
+//            super.run();
+//            while (!isInterrupted()) {
+//                try {
+//                    try {
+//                        tmpbuf = mSerialPort.ReadSerial(fd, 1024, 200);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    if (tmpbuf != null && (DataConversionUtils.byteArrayToInt(new byte[]{tmpbuf[0]}) < 240)) {
+//                        readed = tmpbuf.length;
+//                        byte[] readbuf = new byte[readed];
+//                        System.arraycopy(tmpbuf, 0, readbuf, 0, readed);
+//                        if (isUTF8(readbuf)) {
+//                            readstr = new String(readbuf, StandardCharsets.UTF_8);
+//                            Log.d(TAG, "is a utf8 string");
+//                        } else {
+//                            readstr = new String(readbuf, "gbk");
+//                            Log.d(TAG, "is a gbk string");
+//                        }
+//
+//                        if (readstr != null) {
+//                            //为扫描结果添加已经存储的前后缀
+//
+//                            Message msg = new Message();
+//                            msg.what = 1;
+//                            msg.obj = readstr;
+//                            handler.sendMessage(msg);
+//                        }
+//                    }
+//                } catch (SecurityException | UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
 
 
 }
