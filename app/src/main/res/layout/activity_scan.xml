@@ -16,12 +16,37 @@
 
     <TextView
         android:id="@+id/tv_cound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@color/tv_bg"
+        android:hint="扫描次数:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar_layout"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tv_aimid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@color/tv_bg"
+        android:hint="aimid:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar_layout"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tv_aimidtotype"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:background="@color/tv_bg"
+        android:hint="条码类型:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_cound"
+        tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_content"
@@ -33,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_onetime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_cound" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_aimidtotype" />
 
 
     <Button

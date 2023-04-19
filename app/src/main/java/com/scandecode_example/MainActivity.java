@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
+            public void getBarcodeAimid(String aimid) {
+
+            }
+
+            @Override
             public void getBarcodeByte(byte[] bytes) {
                 //返回原始解码数据,无
                 //Returns raw decoded data,not have

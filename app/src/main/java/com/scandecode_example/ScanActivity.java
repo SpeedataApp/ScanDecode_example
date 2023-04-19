@@ -43,6 +43,7 @@ import jxl.format.Colour;
 
 /**
  * @author xuyan  Example page to implement scan-related functions
+ * 20230418  aimid
  */
 public class ScanActivity extends AppCompatActivity {
 
@@ -54,6 +55,8 @@ public class ScanActivity extends AppCompatActivity {
     private List<DataBean> mList;
     private boolean mTimesScan;
     private TextView tvcound;
+    private TextView tvAimid;
+    private TextView tvAimidToType;
     private int scancount = 0;
     private ScanInterface scanDecode;
 
@@ -76,6 +79,8 @@ public class ScanActivity extends AppCompatActivity {
         mSingle = findViewById(R.id.btn_onetime);
         mTimes = findViewById(R.id.btn_times);
         tvcound = findViewById(R.id.tv_cound);
+        tvAimid = findViewById(R.id.tv_aimid);
+        tvAimidToType = findViewById(R.id.tv_aimidtotype);
         mTimesScan = false;
         mTimes.setOnClickListener(v -> {
             if (mTimesScan) {
@@ -112,6 +117,8 @@ public class ScanActivity extends AppCompatActivity {
             mAdapter.notifyDataSetChanged();
             scancount = 0;
             tvcound.setText("");
+            tvAimid.setText("");
+            tvAimidToType.setText("");
         });
         mSingle.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -155,6 +162,13 @@ public class ScanActivity extends AppCompatActivity {
                 recyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
             }
 
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void getBarcodeAimid(String aimid) {
+                tvAimid.setText("aimid:" + aimid);
+                tvAimidToType.setText("条码类型:" + FileUtils.aimidToType(aimid));
+            }
+
             @Override
             public void getBarcodeByte(byte[] bytes) {
             }
@@ -190,7 +204,7 @@ public class ScanActivity extends AppCompatActivity {
      */
     private final Runnable startScan = () -> {
         sendBroadcast(new Intent("com.geomobile.se4500barcode"));
-        //SystemProperties.set("persist.sys.scanstopimme", "false");
+
     };
 
     @Override
